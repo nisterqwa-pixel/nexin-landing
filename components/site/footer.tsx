@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { NexinLogo } from "./logo";
 
@@ -13,8 +14,17 @@ export function SiteFooter() {
       <div className="container">
         {/* Big wordmark */}
         <div className="mb-20 flex items-end justify-between border-b-hair pb-12">
-          <div className="font-display text-[18vw] font-semibold leading-[0.85] tracking-[-0.07em] text-fg sm:text-[180px]">
-            Nexin<span className="text-blue">.</span>
+          <div className="flex items-center font-display font-semibold leading-[0.85] tracking-[-0.07em] text-fg text-[18vw] sm:text-[180px]">
+            <Image
+              src="/nexin-logo.png"
+              alt="N"
+              width={538}
+              height={537}
+              priority
+              className="mr-[0.02em] inline-block h-[0.86em] w-auto select-none"
+            />
+            <span>exin</span>
+            <span className="text-blue">.</span>
           </div>
           <NexinLogo className="hidden h-20 w-20 sm:block" size={80} />
         </div>
