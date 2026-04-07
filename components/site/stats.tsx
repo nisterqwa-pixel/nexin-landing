@@ -1,26 +1,42 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { SectionLabel } from "./section-label";
+import { AnimatedCounter } from "@/components/ui/animated-counter";
 
-const stats = [
+type Stat = {
+  label: string;
+  to: number;
+  prefix?: string;
+  suffix?: string;
+  decimals?: number;
+  blurb: string;
+};
+
+const stats: Stat[] = [
   {
     label: "HOURS SAVED / YR",
-    value: "12,400",
+    to: 12400,
     blurb: "Per client on average. Six FTEs of time, returned.",
   },
   {
     label: "PIPELINE LIFT",
-    value: "3.2×",
+    to: 3.2,
+    suffix: "×",
+    decimals: 1,
     blurb: "Median uplift in qualified pipeline within 90 days.",
   },
   {
     label: "CLOSE-RATE LIFT",
-    value: "+41%",
+    to: 41,
+    prefix: "+",
+    suffix: "%",
     blurb: "Cleaner data, sharper timing, AI-assisted follow-up.",
   },
   {
     label: "TIME TO PAYBACK",
-    value: "<60d",
+    to: 60,
+    prefix: "<",
+    suffix: "d",
     blurb: "Most clients break even before invoice two.",
   },
 ];
@@ -67,7 +83,12 @@ export function Stats() {
                   {s.label}
                 </p>
                 <p className="mt-6 font-display text-[64px] font-semibold leading-none tracking-[-0.06em] text-fg sm:text-[88px]">
-                  {s.value}
+                  <AnimatedCounter
+                    to={s.to}
+                    prefix={s.prefix}
+                    suffix={s.suffix}
+                    decimals={s.decimals ?? 0}
+                  />
                 </p>
                 <p className="mt-6 max-w-[28ch] text-[14px] leading-[1.55] text-muted-fg">
                   {s.blurb}

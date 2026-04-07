@@ -21,12 +21,12 @@ export function LogoBar() {
             <br />
             real revenue with Nexin
           </p>
-          <div className="relative overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)]">
-            <div className="flex w-max gap-14 animate-marquee">
+          <div className="group relative overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)]">
+            <div className="flex w-max gap-14 animate-marquee transition-[animation-duration] duration-500 group-hover:[animation-play-state:paused]">
               {[...logos, ...logos].map((n, idx) => (
                 <span
                   key={`${n}-${idx}`}
-                  className="font-display text-[26px] font-semibold tracking-[-0.04em] text-fg/55 whitespace-nowrap"
+                  className="whitespace-nowrap font-display text-[26px] font-semibold tracking-[-0.04em] text-fg/45 transition-colors duration-300 hover:text-blue group-hover:text-fg"
                 >
                   {n}
                 </span>

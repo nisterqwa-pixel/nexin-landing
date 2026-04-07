@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Target,
   MessageSquare,
@@ -52,9 +54,24 @@ export function Services() {
           {services.map(({ icon: Icon, name, desc, flagship, span }) => (
             <div
               key={name}
+              onMouseMove={(e) => {
+                const r = e.currentTarget.getBoundingClientRect();
+                e.currentTarget.style.setProperty(
+                  "--mx",
+                  `${e.clientX - r.left}px`,
+                );
+                e.currentTarget.style.setProperty(
+                  "--my",
+                  `${e.clientY - r.top}px`,
+                );
+              }}
               className={`group relative flex flex-col justify-between overflow-hidden rounded-3xl border-hair bg-bg p-7 transition-all hover:border-line-strong ${
                 span ?? ""
               } ${flagship ? "min-h-[260px]" : "min-h-[180px]"}`}
+              style={{
+                backgroundImage:
+                  "radial-gradient(360px circle at var(--mx,50%) var(--my,50%), rgba(31,68,255,0.08), transparent 60%)",
+              }}
             >
               {flagship && (
                 <>

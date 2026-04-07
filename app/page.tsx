@@ -2,6 +2,7 @@ import { SiteNav } from "@/components/site/nav";
 import { Hero } from "@/components/site/hero";
 import { LogoBar } from "@/components/site/logo-bar";
 import { ContextLoss } from "@/components/site/context-loss";
+import { Comparison } from "@/components/site/comparison";
 import { Framework } from "@/components/site/framework";
 import { LeadGen } from "@/components/site/lead-gen";
 import { Services } from "@/components/site/services";
@@ -20,6 +21,7 @@ export default function Home() {
         <Hero />
         <LogoBar />
         <ContextLoss />
+        <Comparison />
         <Framework />
         <LeadGen />
         <Services />

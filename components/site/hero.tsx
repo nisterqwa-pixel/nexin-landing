@@ -2,20 +2,17 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import { ArrowUpRight, Calendar, Sparkles } from "lucide-react";
-import { TextScramble } from "@/components/ui/text-scramble";
+import { Magnetic } from "@/components/ui/magnetic";
 
 const verbs = ["sleep.", "scale.", "ship.", "win."];
 
 export function Hero() {
   const [i, setI] = useState(0);
-  const [k, setK] = useState(0);
 
   useEffect(() => {
-    const t = setInterval(() => {
-      setI((v) => (v + 1) % verbs.length);
-      setK((v) => v + 1);
-    }, 2600);
+    const t = setInterval(() => setI((v) => (v + 1) % verbs.length), 2400);
     return () => clearInterval(t);
   }, []);
 
@@ -49,15 +46,24 @@ export function Hero() {
           <br />
           <span className="inline-flex items-baseline">
             <span className="font-serif text-[1.05em] italic text-blue">you&nbsp;</span>
-            <TextScramble
-              key={k}
-              as="span"
-              className="font-serif text-[1.05em] italic text-blue"
-              duration={0.95}
-              speed={0.035}
-            >
-              {verbs[i]}
-            </TextScramble>
+            <span className="relative inline-block overflow-hidden align-baseline">
+              {/* invisible spacer keeps width = widest verb */}
+              <span className="invisible font-serif text-[1.05em] italic">
+                scale.
+              </span>
+              <AnimatePresence mode="popLayout" initial={false}>
+                <motion.span
+                  key={verbs[i]}
+                  initial={{ y: "100%", opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  exit={{ y: "-100%", opacity: 0 }}
+                  transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
+                  className="absolute inset-0 font-serif text-[1.05em] italic text-blue"
+                >
+                  {verbs[i]}
+                </motion.span>
+              </AnimatePresence>
+            </span>
           </span>
         </h1>
 
@@ -70,13 +76,15 @@ export function Hero() {
 
         {/* CTAs */}
         <div className="mt-12 flex flex-col items-center justify-center gap-4 sm:flex-row sm:gap-5">
-          <Link
-            href="#contact"
-            className="group inline-flex h-12 items-center gap-2 rounded-full bg-fg px-6 text-[14px] font-medium tracking-tight text-bg transition-all hover:bg-blue"
-          >
-            <Calendar className="h-4 w-4" />
-            Book a strategy call
-          </Link>
+          <Magnetic>
+            <Link
+              href="#contact"
+              className="group inline-flex h-12 items-center gap-2 rounded-full bg-fg px-6 text-[14px] font-medium tracking-tight text-bg transition-all hover:bg-blue"
+            >
+              <Calendar className="h-4 w-4" />
+              Book a strategy call
+            </Link>
+          </Magnetic>
           <Link
             href="#lead-gen"
             className="group inline-flex h-12 items-center gap-2 px-2 text-[14px] font-medium tracking-tight text-fg"

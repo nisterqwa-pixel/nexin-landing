@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Slack,
   Mail,
@@ -92,29 +94,77 @@ export function Framework() {
 
                 {/* Output curved lines from hub to right */}
                 <path
+                  id="path-out-blue"
                   d="M 280 200 C 360 200, 360 70, 440 70"
                   stroke="url(#line-blue)"
                   strokeWidth="2.5"
                   strokeLinecap="round"
                 />
                 <path
+                  id="path-out-amber"
                   d="M 280 200 C 360 200, 360 158, 440 158"
                   stroke="url(#line-amber)"
                   strokeWidth="2.5"
                   strokeLinecap="round"
                 />
                 <path
+                  id="path-out-green"
                   d="M 280 200 C 360 200, 360 246, 440 246"
                   stroke="url(#line-green)"
                   strokeWidth="2.5"
                   strokeLinecap="round"
                 />
                 <path
+                  id="path-out-red"
                   d="M 280 200 C 360 200, 360 334, 440 334"
                   stroke="url(#line-red)"
                   strokeWidth="2.5"
                   strokeLinecap="round"
                 />
+
+                {/* Flow particles travelling input -> hub -> output */}
+                {[
+                  { y: 60, delay: 0 },
+                  { y: 130, delay: 0.6 },
+                  { y: 200, delay: 1.2 },
+                  { y: 270, delay: 1.8 },
+                  { y: 340, delay: 2.4 },
+                ].map((p, i) => (
+                  <circle key={`in-p-${i}`} r="3" fill="#FFFFFF">
+                    <animateMotion
+                      dur="3s"
+                      repeatCount="indefinite"
+                      begin={`${p.delay}s`}
+                      path={`M 70 ${p.y} L 220 200`}
+                    />
+                    <animate
+                      attributeName="opacity"
+                      values="0;1;1;0"
+                      dur="3s"
+                      repeatCount="indefinite"
+                      begin={`${p.delay}s`}
+                    />
+                  </circle>
+                ))}
+                {[
+                  { id: "path-out-blue", color: "#3B82F6", delay: 0.2 },
+                  { id: "path-out-amber", color: "#F59E0B", delay: 0.9 },
+                  { id: "path-out-green", color: "#10B981", delay: 1.6 },
+                  { id: "path-out-red", color: "#EF4444", delay: 2.3 },
+                ].map((p) => (
+                  <circle key={p.id} r="3.5" fill={p.color}>
+                    <animateMotion dur="2.6s" repeatCount="indefinite" begin={`${p.delay}s`}>
+                      <mpath href={`#${p.id}`} />
+                    </animateMotion>
+                    <animate
+                      attributeName="opacity"
+                      values="0;1;1;0"
+                      dur="2.6s"
+                      repeatCount="indefinite"
+                      begin={`${p.delay}s`}
+                    />
+                  </circle>
+                ))}
 
                 {/* Central hub: large rounded square with N */}
                 <rect
