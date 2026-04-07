@@ -22,11 +22,22 @@ export function NexinLogo({
 
 export function NexinWordmark({ className }: { className?: string }) {
   return (
-    <div className={cn("flex items-center gap-2.5", className)}>
-      <NexinLogo className="h-7 w-7" />
-      <span className="font-display text-xl font-semibold tracking-[-0.04em] text-fg">
-        Nexin
-      </span>
+    <div
+      className={cn(
+        "flex items-center font-display text-[22px] font-semibold leading-none tracking-[-0.05em] text-fg",
+        className,
+      )}
+    >
+      <Image
+        src="/nexin-logo-plain.png"
+        alt="Nexin"
+        width={637}
+        height={535}
+        priority
+        className="mr-[2px] inline-block h-[0.95em] w-auto select-none"
+      />
+      <span>exin</span>
+      <span className="text-blue">.</span>
     </div>
   );
 }

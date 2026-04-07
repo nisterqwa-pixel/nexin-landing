@@ -16,17 +16,16 @@ export function SiteFooter() {
         <div className="mb-20 flex items-end justify-between border-b-hair pb-12">
           <div className="flex items-center font-display font-semibold leading-[0.85] tracking-[-0.07em] text-fg text-[18vw] sm:text-[180px]">
             <Image
-              src="/nexin-logo.png"
+              src="/nexin-logo-plain.png"
               alt="N"
-              width={538}
-              height={537}
+              width={637}
+              height={535}
               priority
-              className="mr-[0.02em] inline-block h-[0.86em] w-auto select-none"
+              className="mr-[0.04em] inline-block h-[0.82em] w-auto select-none"
             />
             <span>exin</span>
             <span className="text-blue">.</span>
           </div>
-          <NexinLogo className="hidden h-20 w-20 sm:block" size={80} />
         </div>
 
         <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-5">
