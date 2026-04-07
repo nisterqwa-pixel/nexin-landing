@@ -105,7 +105,11 @@ export function ContextLoss() {
               fill
               priority
               sizes="(max-width: 1280px) 100vw, 1200px"
-              className="select-none object-contain object-center mix-blend-multiply"
+              className="select-none object-contain object-center mix-blend-multiply [mask-image:linear-gradient(to_right,transparent,black_12%,black_88%,transparent)] [-webkit-mask-image:linear-gradient(to_right,transparent,black_12%,black_88%,transparent)]"
+              style={{
+                filter:
+                  "drop-shadow(0 24px 30px rgba(15,23,42,0.18)) drop-shadow(0 6px 10px rgba(15,23,42,0.08))",
+              }}
             />
 
             {/* Left knot — tool badges cluster */}
