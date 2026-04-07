@@ -1,15 +1,17 @@
 import Image from "next/image";
 import {
-  Slack,
-  Video,
-  Trello,
-  Grid3x3,
-  Users,
-  Sparkles,
-  Bot,
-  Globe,
-  MessageSquare,
-} from "lucide-react";
+  SiSlack,
+  SiGmail,
+  SiHubspot,
+  SiNotion,
+  SiGooglesheets,
+  SiSalesforce,
+  SiOpenai,
+  SiLinear,
+  SiZoom,
+  SiAsana,
+} from "react-icons/si";
+import type { IconType } from "react-icons";
 import { SectionLabel } from "./section-label";
 
 function Badge({
@@ -17,7 +19,7 @@ function Badge({
   color,
   className = "",
 }: {
-  icon: React.ComponentType<{ className?: string; strokeWidth?: number }>;
+  icon: IconType;
   color: string;
   className?: string;
 }) {
@@ -25,7 +27,7 @@ function Badge({
     <div
       className={`flex h-11 w-11 items-center justify-center rounded-[12px] border border-black/5 bg-white shadow-[0_10px_30px_-10px_rgba(0,0,0,0.25)] ${className}`}
     >
-      <Icon className="h-5 w-5" strokeWidth={1.8} style={{ color }} />
+      <Icon className="h-[22px] w-[22px]" style={{ color }} />
     </div>
   );
 }
@@ -48,31 +50,31 @@ function Bubble({
 
 const cards = [
   {
-    label: "MANUAL DRUDGERY",
-    title: "Context Switching",
-    body: "Your best people are flipping between 14 tabs an hour, leaking attention and momentum every single context switch.",
-    stat: "23h",
-    statSuffix: "/ wk wasted",
+    label: "TOOL SPRAWL",
+    title: "Your stack is the bottleneck",
+    body: "Slack, HubSpot, Notion, Sheets, Gmail. Every team bought their own SaaS and now nothing talks. Nexin wires them together so context flows where it has to.",
+    stat: "14+",
+    statSuffix: "tools, zero glue",
   },
   {
     label: "COLD PIPELINE",
-    title: "Lost Signal",
-    body: "Lists go stale. Templates flop. Replies trickle in. Your forecast lives on hope and one big deal that might close.",
+    title: "Lead gen without the grind",
+    body: "Lists go stale. Templates flop. Reps burn out. Nexin runs the find → enrich → reach → book loop on autopilot — your calendar fills while you sleep.",
     stat: "<2%",
-    statSuffix: "reply rates",
+    statSuffix: "industry reply rate",
   },
   {
-    label: "TOOL SPRAWL",
-    title: "Stack Stitching",
-    body: "Every team bought their own SaaS. Nothing syncs. Reporting is a graveyard of CSVs glued together at midnight.",
-    stat: "14+",
-    statSuffix: "tools, no glue",
+    label: "AI WITHOUT CONTEXT",
+    title: "AI that actually sees the work",
+    body: "Generic copilots can't fix what they never see. Nexin gives AI the wiring it needs — your data, your tools, your outcomes — so it ships work, not suggestions.",
+    stat: "96%",
+    statSuffix: "of AI projects stall",
   },
 ];
 
 export function ContextLoss() {
   return (
-    <section className="relative overflow-hidden py-28 sm:py-36">
+    <section className="relative overflow-hidden py-20 sm:py-24">
       {/* Subtle texture */}
       <div className="pointer-events-none absolute inset-0 bg-grid-light opacity-50 [mask-image:linear-gradient(to_bottom,transparent,black_30%,black_70%,transparent)]" />
 
@@ -90,14 +92,14 @@ export function ContextLoss() {
             <br />
             and AI can&apos;t fix what it never sees.
           </h2>
-          <p className="mx-auto mt-8 max-w-xl text-pretty text-[18px] leading-[1.55] text-muted-fg">
+          <p className="mx-auto mt-6 max-w-xl text-pretty text-[18px] leading-[1.55] text-muted-fg">
             Tool sprawl is killing context. Context decay is killing pipeline.
             Pipeline decay is killing the quarter. Sound familiar?
           </p>
         </div>
 
         {/* Tangled cable visual — Gemini-rendered hero asset */}
-        <div className="relative mx-auto mt-20 max-w-[1200px]">
+        <div className="relative mx-auto mt-10 max-w-[1200px]">
           <div className="relative aspect-[1704/624] w-full">
             <Image
               src="/tangled-cable.png"
@@ -112,27 +114,30 @@ export function ContextLoss() {
               }}
             />
 
-            {/* Left knot — tool badges cluster */}
-            <div className="absolute left-[8%] top-[18%] hidden items-center gap-2 sm:flex">
-              <Badge icon={Video} color="#2D8CFF" />
-              <Badge icon={Trello} color="#0079BF" className="-ml-3 mt-6" />
+            {/* Left knot — comms + GTM tools */}
+            <div className="absolute left-[7%] top-[16%] hidden items-center gap-2 sm:flex">
+              <Badge icon={SiZoom} color="#0B5CFF" />
+              <Badge icon={SiAsana} color="#F06A6A" className="-ml-3 mt-7" />
             </div>
-            <div className="absolute left-[5%] top-[52%] hidden items-center gap-2 sm:flex">
-              <Badge icon={Slack} color="#E01E5A" />
-              <Badge icon={Grid3x3} color="#FBBC05" className="-ml-2 -mt-4" />
-              <Badge icon={Users} color="#6264A7" className="-ml-2 mt-3" />
+            <div className="absolute left-[4%] top-[54%] hidden items-center gap-2 sm:flex">
+              <Badge icon={SiSlack} color="#E01E5A" />
+              <Badge icon={SiGooglesheets} color="#0F9D58" className="-ml-2 -mt-5" />
+              <Badge icon={SiHubspot} color="#FF7A59" className="-ml-2 mt-4" />
             </div>
 
-            {/* Middle knot — AI tool badges */}
-            <div className="absolute left-[46%] top-[14%] hidden sm:block">
-              <Badge icon={Sparkles} color="#1A73E8" />
+            {/* Middle knot — data + AI */}
+            <div className="absolute left-[46%] top-[12%] hidden sm:block">
+              <Badge icon={SiNotion} color="#0A0A0A" />
             </div>
             <div className="absolute left-[42%] top-[40%] hidden items-center gap-2 sm:flex">
-              <Badge icon={Bot} color="#FF6F00" />
-              <Badge icon={Globe} color="#10A37F" className="-ml-2 -mt-5" />
+              <Badge icon={SiOpenai} color="#0A0A0A" />
+              <Badge icon={SiSalesforce} color="#00A1E0" className="-ml-2 -mt-5" />
             </div>
-            <div className="absolute left-[50%] top-[62%] hidden sm:block">
-              <Badge icon={MessageSquare} color="#0A0A0A" />
+            <div className="absolute left-[50%] top-[64%] hidden sm:block">
+              <Badge icon={SiLinear} color="#5E6AD2" />
+            </div>
+            <div className="absolute left-[38%] top-[60%] hidden sm:block">
+              <Badge icon={SiGmail} color="#EA4335" />
             </div>
 
             {/* Right knot — thought bubbles */}
