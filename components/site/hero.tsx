@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowUpRight, Calendar, Sparkles } from "lucide-react";
 import { Magnetic } from "@/components/ui/magnetic";
-import { LiveRevenueCard } from "./live-revenue-card";
 
 const verbs = ["sleep.", "scale.", "ship.", "win."];
 
@@ -94,9 +93,6 @@ export function Hero() {
             <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
           </Link>
         </div>
-
-        {/* Live revenue chart card */}
-        <LiveRevenueCard />
 
         {/* Trust micro-row */}
         <div className="mt-14 flex flex-col items-center gap-4">

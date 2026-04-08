@@ -22,6 +22,7 @@ export default function Home() {
       <SiteNav />
       <main>
         <Hero />
+        <GrowthStory />
         <LogoBar />
         <ContextLoss />
         <Comparison />
@@ -29,7 +30,6 @@ export default function Home() {
         <LeadGen />
         <Services />
         <Stats />
-        <GrowthStory />
         <ActivityTicker />
         <MarqueeBand />
         <Manifesto />
