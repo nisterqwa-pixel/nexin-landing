@@ -6,8 +6,8 @@ import { motion, useMotionValue, useSpring } from "framer-motion";
 export function CursorBlob() {
   const x = useMotionValue(-200);
   const y = useMotionValue(-200);
-  const sx = useSpring(x, { stiffness: 80, damping: 20, mass: 0.6 });
-  const sy = useSpring(y, { stiffness: 80, damping: 20, mass: 0.6 });
+  const sx = useSpring(x, { stiffness: 260, damping: 32, mass: 0.4 });
+  const sy = useSpring(y, { stiffness: 260, damping: 32, mass: 0.4 });
 
   useEffect(() => {
     function onMove(e: MouseEvent) {

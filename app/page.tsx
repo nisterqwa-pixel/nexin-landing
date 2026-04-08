@@ -7,6 +7,7 @@ import { Framework } from "@/components/site/framework";
 import { LeadGen } from "@/components/site/lead-gen";
 import { Services } from "@/components/site/services";
 import { Stats } from "@/components/site/stats";
+import { GrowthStory } from "@/components/site/growth-story";
 import { ActivityTicker } from "@/components/site/activity-ticker";
 import { MarqueeBand } from "@/components/site/marquee-band";
 import { Manifesto } from "@/components/site/manifesto";
@@ -28,6 +29,7 @@ export default function Home() {
         <LeadGen />
         <Services />
         <Stats />
+        <GrowthStory />
         <ActivityTicker />
         <MarqueeBand />
         <Manifesto />
