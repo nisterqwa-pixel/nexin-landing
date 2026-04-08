@@ -134,6 +134,15 @@
     animation: reveal 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
   }
 
+  /* Card rise on mount */
+  @keyframes rise {
+    0% { opacity: 0; transform: translateY(28px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+  .animate-rise {
+    animation: rise 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both;
+  }
+
   /* Underline draw */
   .link-underline {
     background-image: linear-gradient(currentColor, currentColor);

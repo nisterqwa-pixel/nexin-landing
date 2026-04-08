@@ -7,6 +7,8 @@ import { Framework } from "@/components/site/framework";
 import { LeadGen } from "@/components/site/lead-gen";
 import { Services } from "@/components/site/services";
 import { Stats } from "@/components/site/stats";
+import { ActivityTicker } from "@/components/site/activity-ticker";
+import { MarqueeBand } from "@/components/site/marquee-band";
 import { Manifesto } from "@/components/site/manifesto";
 import { Process } from "@/components/site/process";
 import { Testimonials } from "@/components/site/testimonials";
@@ -26,6 +28,8 @@ export default function Home() {
         <LeadGen />
         <Services />
         <Stats />
+        <ActivityTicker />
+        <MarqueeBand />
         <Manifesto />
         <Process />
         <Testimonials />

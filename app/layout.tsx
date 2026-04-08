@@ -3,6 +3,8 @@ import { GeistSans } from "geist/font/sans";
 import { GeistMono } from "geist/font/mono";
 import { Instrument_Serif } from "next/font/google";
 import "./globals.css";
+import { ScrollProgress } from "@/components/ui/scroll-progress";
+import { CursorBlob } from "@/components/ui/cursor-blob";
 
 const instrument = Instrument_Serif({
   subsets: ["latin"],
@@ -33,7 +35,11 @@ export default function RootLayout({
       lang="en"
       className={`${GeistSans.variable} ${GeistMono.variable} ${instrument.variable}`}
     >
-      <body className="min-h-screen bg-bg text-fg antialiased">{children}</body>
+      <body className="min-h-screen bg-bg text-fg antialiased">
+        <ScrollProgress />
+        <CursorBlob />
+        {children}
+      </body>
     </html>
   );
 }

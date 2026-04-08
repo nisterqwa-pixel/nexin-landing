@@ -1,43 +1,48 @@
+"use client";
+
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { SectionLabel } from "./section-label";
 import { AnimatedCounter } from "@/components/ui/animated-counter";
+import { AnimatedAreaChart } from "@/components/ui/animated-area-chart";
 
-type Stat = {
-  label: string;
-  to: number;
-  prefix?: string;
-  suffix?: string;
-  decimals?: number;
-  blurb: string;
-};
+const growthSeries = [
+  {
+    label: "Without Nexin",
+    color: "#94A3B8",
+    values: [40, 42, 44, 46, 47, 49, 50, 52, 53],
+    fillId: "manual",
+    dashed: true,
+  },
+  {
+    label: "With Nexin",
+    color: "#1F44FF",
+    values: [40, 52, 68, 88, 112, 142, 178, 220, 268],
+    fillId: "nexin",
+  },
+];
 
-const stats: Stat[] = [
+const months = ["W1", "W2", "W3", "W4", "W5", "W6", "W7", "W8", "W9"];
+
+const sideStats = [
   {
     label: "HOURS SAVED / YR",
     to: 12400,
-    blurb: "Per client on average. Six FTEs of time, returned.",
-  },
-  {
-    label: "PIPELINE LIFT",
-    to: 3.2,
-    suffix: "×",
-    decimals: 1,
-    blurb: "Median uplift in qualified pipeline within 90 days.",
+    blurb: "Per client. Six FTEs returned.",
   },
   {
     label: "CLOSE-RATE LIFT",
     to: 41,
     prefix: "+",
     suffix: "%",
-    blurb: "Cleaner data, sharper timing, AI-assisted follow-up.",
+    blurb: "Cleaner data, sharper timing.",
   },
   {
     label: "TIME TO PAYBACK",
     to: 60,
     prefix: "<",
     suffix: "d",
-    blurb: "Most clients break even before invoice two.",
+    blurb: "Most clients break even by invoice two.",
   },
 ];
 
@@ -69,32 +74,65 @@ export function Stats() {
             </Link>
           </div>
 
-          <div className="grid gap-px rounded-3xl border-hair bg-line sm:grid-cols-2">
-            {stats.map((s, idx) => (
-              <div
-                key={s.label}
-                className={`relative bg-bg p-8 sm:p-10 ${
-                  idx === 0 ? "rounded-tl-3xl sm:rounded-tr-none" : ""
-                } ${idx === 1 ? "sm:rounded-tr-3xl" : ""} ${
-                  idx === 2 ? "sm:rounded-bl-3xl" : ""
-                } ${idx === 3 ? "rounded-br-3xl" : ""}`}
-              >
-                <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-fg">
-                  {s.label}
-                </p>
-                <p className="mt-6 font-display text-[64px] font-semibold leading-none tracking-[-0.06em] text-fg sm:text-[88px]">
-                  <AnimatedCounter
-                    to={s.to}
-                    prefix={s.prefix}
-                    suffix={s.suffix}
-                    decimals={s.decimals ?? 0}
-                  />
-                </p>
-                <p className="mt-6 max-w-[28ch] text-[14px] leading-[1.55] text-muted-fg">
-                  {s.blurb}
-                </p>
+          <div className="space-y-px overflow-hidden rounded-3xl border-hair bg-line">
+            {/* Big chart panel */}
+            <div className="relative bg-bg p-8 sm:p-10">
+              <div className="flex flex-wrap items-end justify-between gap-4">
+                <div>
+                  <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-fg">
+                    QUALIFIED PIPELINE / 60 DAYS
+                  </p>
+                  <p className="mt-3 font-display text-[56px] font-semibold leading-none tracking-[-0.06em] text-fg sm:text-[72px]">
+                    <AnimatedCounter to={3.2} suffix="×" decimals={1} />
+                  </p>
+                  <p className="mt-2 text-[14px] text-muted-fg">
+                    Median uplift across 40+ deployments
+                  </p>
+                </div>
+                <div className="flex flex-col gap-2 text-[12px]">
+                  <div className="flex items-center gap-2">
+                    <span className="h-[2px] w-6 rounded bg-blue" />
+                    <span className="text-fg">With Nexin</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="h-[2px] w-6 rounded border-t-2 border-dashed border-slate-400" />
+                    <span className="text-muted-fg">Without</span>
+                  </div>
+                </div>
               </div>
-            ))}
+
+              <div className="mt-6 -mx-2 text-fg">
+                <AnimatedAreaChart
+                  series={growthSeries}
+                  xLabels={months}
+                  height={300}
+                  yTicks={4}
+                  ariaLabel="Pipeline growth comparison"
+                  className="h-[300px] w-full"
+                />
+              </div>
+            </div>
+
+            {/* Side stats row */}
+            <div className="grid gap-px bg-line sm:grid-cols-3">
+              {sideStats.map((s) => (
+                <div key={s.label} className="bg-bg p-8">
+                  <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-fg">
+                    {s.label}
+                  </p>
+                  <p className="mt-4 font-display text-[40px] font-semibold leading-none tracking-[-0.05em] text-fg">
+                    <AnimatedCounter
+                      to={s.to}
+                      prefix={s.prefix}
+                      suffix={s.suffix}
+                    />
+                  </p>
+                  <p className="mt-3 text-[13px] leading-[1.5] text-muted-fg">
+                    {s.blurb}
+                  </p>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>
