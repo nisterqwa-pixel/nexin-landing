@@ -3,8 +3,6 @@
 import { Asterisk } from "lucide-react";
 
 const phrases = [
-  "Ship work, not slides",
-  "AI that sees the wiring",
   "From signal to booked meeting",
   "Operators over optics",
   "Pipeline on autopilot",
