@@ -5,8 +5,6 @@ import { ArrowUpRight } from "lucide-react";
 const links = [
   { href: "#lead-gen", label: "Lead Gen" },
   { href: "#services", label: "Services" },
-  { href: "#process", label: "Process" },
-  { href: "#results", label: "Results" },
   { href: "#contact", label: "Contact" },
 ];
 
