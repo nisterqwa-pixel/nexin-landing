@@ -6,6 +6,7 @@ import {
   ArrowRight,
 } from "lucide-react";
 import { SectionLabel } from "./section-label";
+import { Reveal } from "@/components/ui/reveal";
 import Link from "next/link";
 
 const pipeline = [
@@ -81,34 +82,35 @@ export function LeadGen() {
           <div className="relative">
             <div className="space-y-4">
               {pipeline.map(({ n, icon: Icon, label, title, body }, idx) => (
-                <div
-                  key={n}
-                  className="group relative rounded-3xl border-hair bg-bg p-6 transition-all hover:border-line-strong sm:p-8"
-                  style={{
-                    transform: `translateX(${idx * 12}px)`,
-                  }}
-                >
-                  <div className="flex items-start gap-5 sm:gap-7">
-                    <div className="flex-shrink-0">
-                      <div className="flex h-12 w-12 items-center justify-center rounded-xl border-hair bg-cream text-fg transition-colors group-hover:bg-blue group-hover:text-bg">
-                        <Icon className="h-5 w-5" />
+                <Reveal key={n} delay={idx * 0.08}>
+                  <div
+                    className="group relative rounded-3xl border-hair bg-bg p-6 transition-all hover:-translate-y-0.5 hover:border-line-strong hover:shadow-[0_24px_60px_-30px_rgba(15,23,42,0.25)] sm:p-8"
+                    style={{
+                      transform: `translateX(${idx * 12}px)`,
+                    }}
+                  >
+                    <div className="flex items-start gap-5 sm:gap-7">
+                      <div className="flex-shrink-0">
+                        <div className="flex h-12 w-12 items-center justify-center rounded-xl border-hair bg-cream text-fg transition-colors group-hover:bg-blue group-hover:text-bg">
+                          <Icon className="h-5 w-5" />
+                        </div>
                       </div>
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-center gap-3">
-                        <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-blue">
-                          {n} · {label}
-                        </span>
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-3">
+                          <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-blue">
+                            {n} · {label}
+                          </span>
+                        </div>
+                        <h3 className="mt-2 font-display text-2xl font-semibold tracking-[-0.035em] text-fg sm:text-[28px]">
+                          {title}
+                        </h3>
+                        <p className="mt-2 text-pretty text-[15px] leading-[1.55] text-muted-fg">
+                          {body}
+                        </p>
                       </div>
-                      <h3 className="mt-2 font-display text-2xl font-semibold tracking-[-0.035em] text-fg sm:text-[28px]">
-                        {title}
-                      </h3>
-                      <p className="mt-2 text-pretty text-[15px] leading-[1.55] text-muted-fg">
-                        {body}
-                      </p>
                     </div>
                   </div>
-                </div>
+                </Reveal>
               ))}
             </div>
           </div>

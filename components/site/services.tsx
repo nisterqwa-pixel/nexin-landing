@@ -11,6 +11,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import { SectionLabel } from "./section-label";
+import { Reveal } from "@/components/ui/reveal";
 
 const services = [
   {
@@ -51,28 +52,32 @@ export function Services() {
 
         {/* Bento grid */}
         <div className="mt-16 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4 lg:grid-rows-3">
-          {services.map(({ icon: Icon, name, desc, flagship, span }) => (
-            <div
+          {services.map(({ icon: Icon, name, desc, flagship, span }, idx) => (
+            <Reveal
               key={name}
-              onMouseMove={(e) => {
-                const r = e.currentTarget.getBoundingClientRect();
-                e.currentTarget.style.setProperty(
-                  "--mx",
-                  `${e.clientX - r.left}px`,
-                );
-                e.currentTarget.style.setProperty(
-                  "--my",
-                  `${e.clientY - r.top}px`,
-                );
-              }}
-              className={`group relative flex flex-col justify-between overflow-hidden rounded-3xl border-hair bg-bg p-7 transition-all hover:border-line-strong ${
-                span ?? ""
-              } ${flagship ? "min-h-[260px]" : "min-h-[180px]"}`}
-              style={{
-                backgroundImage:
-                  "radial-gradient(360px circle at var(--mx,50%) var(--my,50%), rgba(31,68,255,0.08), transparent 60%)",
-              }}
+              delay={idx * 0.06}
+              className={span ?? ""}
             >
+              <div
+                onMouseMove={(e) => {
+                  const r = e.currentTarget.getBoundingClientRect();
+                  e.currentTarget.style.setProperty(
+                    "--mx",
+                    `${e.clientX - r.left}px`,
+                  );
+                  e.currentTarget.style.setProperty(
+                    "--my",
+                    `${e.clientY - r.top}px`,
+                  );
+                }}
+                className={`group relative flex h-full flex-col justify-between overflow-hidden rounded-3xl border-hair bg-bg p-7 transition-all duration-500 hover:-translate-y-1 hover:border-line-strong hover:shadow-[0_30px_70px_-30px_rgba(15,23,42,0.25)] ${
+                  flagship ? "min-h-[260px]" : "min-h-[180px]"
+                }`}
+                style={{
+                  backgroundImage:
+                    "radial-gradient(360px circle at var(--mx,50%) var(--my,50%), rgba(31,68,255,0.08), transparent 60%)",
+                }}
+              >
               {flagship && (
                 <>
                   {/* decorative */}
@@ -112,7 +117,8 @@ export function Services() {
                   {desc}
                 </p>
               </div>
-            </div>
+              </div>
+            </Reveal>
           ))}
         </div>
       </div>

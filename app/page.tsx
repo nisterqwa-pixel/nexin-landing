@@ -3,6 +3,7 @@ import { Hero } from "@/components/site/hero";
 import { LogoBar } from "@/components/site/logo-bar";
 import { ContextLoss } from "@/components/site/context-loss";
 import { Comparison } from "@/components/site/comparison";
+import { AutomationModel } from "@/components/site/automation-model";
 import { LeadGen } from "@/components/site/lead-gen";
 import { Services } from "@/components/site/services";
 import { GrowthStory } from "@/components/site/growth-story";
@@ -21,6 +22,7 @@ export default function Home() {
         <LogoBar />
         <ContextLoss />
         <Comparison />
+        <AutomationModel />
         <LeadGen />
         <Services />
         <Manifesto />
