@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { NexinWordmark } from "./logo";
+import { NavLogo } from "./header-logo";
 import { ArrowUpRight } from "lucide-react";
 
 const links = [
@@ -15,7 +15,7 @@ export function SiteNav() {
     <header className="fixed inset-x-0 top-0 z-50 border-b-hair bg-bg/80 backdrop-blur-xl">
       <div className="container flex h-[68px] items-center justify-between">
         <Link href="/" aria-label="Nexin home">
-          <NexinWordmark />
+          <NavLogo />
         </Link>
 
         <nav className="hidden items-center gap-9 md:flex">
