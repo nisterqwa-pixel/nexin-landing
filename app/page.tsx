@@ -6,7 +6,6 @@ import { Comparison } from "@/components/site/comparison";
 import { LeadGen } from "@/components/site/lead-gen";
 import { Services } from "@/components/site/services";
 import { GrowthStory } from "@/components/site/growth-story";
-import { MarqueeBand } from "@/components/site/marquee-band";
 import { Manifesto } from "@/components/site/manifesto";
 import { Testimonials } from "@/components/site/testimonials";
 import { FinalCta } from "@/components/site/cta";
@@ -24,7 +23,6 @@ export default function Home() {
         <Comparison />
         <LeadGen />
         <Services />
-        <MarqueeBand />
         <Manifesto />
         <Testimonials />
         <FinalCta />
