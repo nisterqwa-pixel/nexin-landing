@@ -1,502 +1,668 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import Link from "next/link";
 import {
   AnimatePresence,
   motion,
+  useInView,
   useReducedMotion,
 } from "framer-motion";
+import { ArrowUpRight, Check, RotateCcw } from "lucide-react";
 import {
-  Radio,
-  Sparkles,
-  BrainCircuit,
-  Zap,
-  CalendarCheck,
-  Play,
-  Pause,
-  type LucideIcon,
-} from "lucide-react";
+  SiHubspot,
+  SiOpenai,
+  SiGmail,
+  SiSlack,
+  SiGooglecalendar,
+} from "react-icons/si";
+import { FaLinkedin } from "react-icons/fa";
+import type { IconType } from "react-icons";
 
-// ---------- Data ----------
+// ============================================================================
+// Data — a real-feeling trace of one lead moving through the stack
+// ============================================================================
 
-type Stage = {
-  id: string;
-  icon: LucideIcon;
-  label: string;
-  title: string;
+type TraceEvent = {
+  t: string; // display timestamp e.g. "00.4s"
+  brand: { Icon: IconType; name: string; color: string };
+  slug: string; // terminal-style event name
+  title: string; // editorial title
   body: string;
-  log: string;
-  meta: string;
-  color: string;
+  fills?: string[]; // dossier field keys this event fills in
 };
 
-const stages: Stage[] = [
+const events: TraceEvent[] = [
   {
-    id: "signal",
-    icon: Radio,
-    label: "01 · SIGNAL",
-    title: "A signal fires.",
-    body: "Form fill, LinkedIn view, email reply, intent spike. Nexin listens on every channel you already own — nothing gets missed.",
-    log: "alex@acme.com · pricing page view",
-    meta: "LinkedIn · 2s ago",
-    color: "#6B8EFF",
+    t: "00.0s",
+    brand: { Icon: FaLinkedin, name: "LinkedIn", color: "#0A66C2" },
+    slug: "signal · pricing_page_view",
+    title: "Alex lands on /pricing.",
+    body: "Third-party pixel fires a signal. No rep is watching. Nexin already is.",
+    fills: ["name", "role", "company", "location"],
   },
   {
-    id: "enrich",
-    icon: Sparkles,
-    label: "02 · ENRICH",
-    title: "Context gets loaded.",
-    body: "Role, company, tech stack, funding, headcount, intent. The AI walks into the conversation already knowing the buyer cold.",
-    log: "Acme Robotics · Series B · 84 HC · HubSpot",
-    meta: "6 sources · 180ms",
-    color: "#8BA6FF",
+    t: "00.4s",
+    brand: { Icon: SiHubspot, name: "HubSpot", color: "#FF7A59" },
+    slug: "enrich · dossier_built",
+    title: "The dossier gets built.",
+    body: "CRM history, firmographics, tech stack, intent, funding — pulled in a single round trip.",
+    fills: ["headcount", "stage", "stack", "intent"],
   },
   {
-    id: "decide",
-    icon: BrainCircuit,
-    label: "03 · DECIDE",
+    t: "00.9s",
+    brand: { Icon: SiOpenai, name: "OpenAI", color: "#10A37F" },
+    slug: "decide · draft_generated",
     title: "The AI writes the play.",
-    body: "Nexin picks the channel, drafts the copy, chooses the timing, and proposes the next best action — with your brand voice baked in.",
-    log: "Draft: \u201cHey Alex — saw you\u2019re scaling ops\u2026\u201d",
-    meta: "Confidence · 94%",
-    color: "#1F44FF",
+    body: "A 74-word email in your voice, referencing the Series B round Acme announced yesterday.",
+    fills: ["draft"],
   },
   {
-    id: "act",
-    icon: Zap,
-    label: "04 · ACT",
-    title: "The work ships.",
-    body: "Email sent, Slack pinged, CRM updated, calendar hold dropped in. Zero copy-paste. Your team stays out of the weeds.",
-    log: "Email sent · CRM updated · #sales notified",
-    meta: "3 tools · 0.4s",
-    color: "#3B5CFF",
+    t: "01.3s",
+    brand: { Icon: SiGmail, name: "Gmail", color: "#EA4335" },
+    slug: "act · email_sent",
+    title: "Email lands in the inbox.",
+    body: "Sent from your rep's real address, threaded under the pricing visit, tracked for replies.",
   },
   {
-    id: "outcome",
-    icon: CalendarCheck,
-    label: "05 · OUTCOME",
-    title: "Meeting on the calendar.",
-    body: "Reply → calendar hold → qualified call confirmed. You show up prepped, the system logs everything back to the stack.",
-    log: "Meeting booked · Acme · Tue 2:00pm",
-    meta: "$24k pipeline · confirmed",
-    color: "#10B981",
+    t: "01.5s",
+    brand: { Icon: SiSlack, name: "Slack", color: "#E01E5A" },
+    slug: "notify · sales_pinged",
+    title: "Your team gets the heads-up.",
+    body: "A card drops into #sales with the dossier, the draft, and a \u201ctake over\u201d button.",
+  },
+  {
+    t: "05.8s",
+    brand: { Icon: SiGooglecalendar, name: "Google Calendar", color: "#4285F4" },
+    slug: "outcome · meeting_booked",
+    title: "Alex replies. Meeting lands.",
+    body: "The AI SDR confirms a time, drops the invite, updates HubSpot. You show up prepped.",
+    fills: ["meeting", "status"],
   },
 ];
 
-// ---------- Layout constants (SVG viewBox space) ----------
+type DossierField = { key: string; label: string; value: string };
 
-const W = 1100;
-const H = 280;
-const nodeR = 46;
-const nodeY = H / 2;
-const firstX = 120;
-const lastX = W - 120;
-const step = (lastX - firstX) / (stages.length - 1);
-const nodeX = (i: number) => firstX + i * step;
+const dossierFields: DossierField[] = [
+  { key: "name", label: "Name", value: "Alex Rivera" },
+  { key: "role", label: "Role", value: "Head of Operations" },
+  { key: "company", label: "Company", value: "Acme Robotics" },
+  { key: "location", label: "HQ", value: "Brooklyn, NY" },
+  { key: "headcount", label: "Headcount", value: "84" },
+  { key: "stage", label: "Stage", value: "Series B · 2026" },
+  { key: "stack", label: "Stack", value: "HubSpot, Linear, Slack" },
+  { key: "intent", label: "Intent score", value: "94 / 100" },
+  { key: "meeting", label: "Meeting", value: "Tue 2:00pm EST" },
+  { key: "status", label: "Status", value: "CONVERTED" },
+];
 
-// ---------- Main component ----------
+// ============================================================================
+// Main section
+// ============================================================================
 
 export function AutomationModel() {
-  const [active, setActive] = useState(0);
-  const [playing, setPlaying] = useState(true);
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once: false, margin: "-25%" });
   const reduced = useReducedMotion();
+  // cursor: -1 = idle, 0..N-1 = events revealed, N = done
+  const [cursor, setCursor] = useState(-1);
+  const [isRunning, setIsRunning] = useState(false);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const hasPlayedOnceRef = useRef(false);
 
-  // Autoplay loop
-  useEffect(() => {
-    if (!playing || reduced) return;
-    const t = setInterval(
-      () => setActive((a) => (a + 1) % stages.length),
-      2600,
-    );
-    return () => clearInterval(t);
-  }, [playing, reduced]);
-
-  const s = stages[active];
-  const ActiveIcon = s.icon;
-
-  const handleSelect = (i: number) => {
-    setActive(i);
-    setPlaying(false);
+  const startRun = () => {
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    setCursor(-1);
+    setIsRunning(true);
   };
 
+  // Advance cursor on a timer while running
+  useEffect(() => {
+    if (!isRunning) return;
+    if (cursor >= events.length) {
+      setIsRunning(false);
+      return;
+    }
+    const delay = cursor === -1 ? 450 : 900;
+    timeoutRef.current = setTimeout(
+      () => setCursor((c) => c + 1),
+      delay,
+    );
+    return () => {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    };
+  }, [cursor, isRunning]);
+
+  // Auto-start once, the first time the section scrolls into view
+  useEffect(() => {
+    if (!inView || hasPlayedOnceRef.current) return;
+    hasPlayedOnceRef.current = true;
+    if (reduced) {
+      setCursor(events.length);
+    } else {
+      startRun();
+    }
+  }, [inView, reduced]);
+
+  const filledKeys = useMemo(() => {
+    const set = new Set<string>();
+    const shown = cursor >= 0 ? events.slice(0, Math.min(cursor + 1, events.length)) : [];
+    shown.forEach((e) => e.fills?.forEach((k) => set.add(k)));
+    return set;
+  }, [cursor]);
+
+  const done = cursor >= events.length;
+  const visibleEvents = cursor >= 0 ? events.slice(0, Math.min(cursor + 1, events.length)) : [];
+
   return (
-    <section className="relative overflow-hidden bg-[#05070D] py-28 text-white sm:py-36">
-      {/* Radial blue wash */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0"
-        style={{
-          background:
-            "radial-gradient(ellipse 65% 55% at 50% 45%, rgba(31,68,255,0.20), transparent 65%)",
-        }}
-      />
-      {/* Grid texture */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 opacity-[0.06]"
-        style={{
-          backgroundImage:
-            "linear-gradient(to right, #fff 1px, transparent 1px), linear-gradient(to bottom, #fff 1px, transparent 1px)",
-          backgroundSize: "80px 80px",
-          maskImage:
-            "radial-gradient(ellipse 70% 60% at 50% 50%, black, transparent)",
-          WebkitMaskImage:
-            "radial-gradient(ellipse 70% 60% at 50% 50%, black, transparent)",
-        }}
-      />
+    <section
+      ref={ref}
+      className="relative overflow-hidden bg-[#0A0C12] py-28 text-white sm:py-32"
+      aria-label="Live automation trace"
+    >
+      <BackgroundDecor />
 
       <div className="container relative z-10">
-        {/* Header */}
-        <div className="mx-auto max-w-3xl text-center">
-          <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-blue">
-            <span className="mr-2 inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-blue align-middle" />
-            How it works · an automation, alive
-          </p>
-          <h2 className="mt-6 text-balance font-display text-display-xs font-semibold sm:text-display-sm md:text-display-md">
-            Watch the{" "}
-            <span className="font-serif italic text-blue">wiring.</span>
-          </h2>
-          <p className="mx-auto mt-6 max-w-xl text-pretty text-[17px] leading-[1.55] text-white/55">
-            One live signal, five stages, zero handoffs. Click any node to jump
-            to that moment — or sit back and watch the loop play itself.
-          </p>
+        <SectionHeader />
+
+        <div className="relative mx-auto mt-16 grid max-w-[1220px] gap-6 lg:mt-20 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:gap-8">
+          <LeadDossier filled={filledKeys} done={done} />
+          <EventStream
+            visible={visibleEvents}
+            totalCount={events.length}
+            done={done}
+          />
         </div>
 
-        {/* The model */}
-        <div className="relative mx-auto mt-20 max-w-[1200px]">
-          <FlowDiagram active={active} onSelect={handleSelect} />
-
-          {/* Detail + live output */}
-          <div className="mt-14 grid gap-10 lg:grid-cols-[1.1fr_1fr] lg:gap-16">
-            {/* Stage narrative */}
-            <div className="min-h-[200px]">
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={s.id}
-                  initial={{ opacity: 0, y: 16 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -12 }}
-                  transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                >
-                  <p
-                    className="font-mono text-[10px] uppercase tracking-[0.22em]"
-                    style={{ color: s.color }}
-                  >
-                    {s.label}
-                  </p>
-                  <h3 className="mt-3 font-display text-[36px] font-semibold leading-[1] tracking-[-0.04em] text-white sm:text-[48px]">
-                    {s.title}
-                  </h3>
-                  <p className="mt-5 max-w-lg text-pretty text-[15px] leading-[1.6] text-white/60 sm:text-[17px]">
-                    {s.body}
-                  </p>
-                </motion.div>
-              </AnimatePresence>
-            </div>
-
-            {/* Live output card */}
-            <div className="self-start rounded-3xl border border-white/10 bg-white/[0.03] p-6 backdrop-blur sm:p-7">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-white/50">
-                  <span className="relative flex h-2 w-2">
-                    <span className="absolute inset-0 animate-ping rounded-full bg-blue opacity-60" />
-                    <span className="relative h-2 w-2 rounded-full bg-blue" />
-                  </span>
-                  Live output
-                </div>
-                <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-white/40">
-                  Stage {active + 1} / {stages.length}
-                </p>
-              </div>
-
-              <div className="mt-5">
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={s.id}
-                    initial={{ opacity: 0, y: 14 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
-                    className="flex items-start gap-3 rounded-2xl border border-white/10 bg-black/30 p-4"
-                  >
-                    <div
-                      className="mt-0.5 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl"
-                      style={{
-                        backgroundColor: `${s.color}26`,
-                        color: s.color,
-                        boxShadow: `0 0 30px -10px ${s.color}`,
-                      }}
-                    >
-                      <ActiveIcon className="h-4 w-4" />
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <p className="truncate text-[14px] font-medium text-white">
-                        {s.log}
-                      </p>
-                      <p className="mt-1 font-mono text-[10px] uppercase tracking-[0.14em] text-white/40">
-                        {s.meta}
-                      </p>
-                    </div>
-                  </motion.div>
-                </AnimatePresence>
-              </div>
-
-              {/* Stage progress bars */}
-              <div className="mt-6 grid grid-cols-5 gap-1.5">
-                {stages.map((stage, i) => (
-                  <button
-                    key={stage.id}
-                    type="button"
-                    onClick={() => handleSelect(i)}
-                    aria-label={`Jump to ${stage.title}`}
-                    className="group relative h-1 overflow-hidden rounded-full bg-white/10 transition-colors hover:bg-white/20"
-                  >
-                    <motion.span
-                      className="absolute inset-y-0 left-0 rounded-full"
-                      style={{
-                        backgroundColor:
-                          i <= active ? stage.color : "transparent",
-                      }}
-                      animate={{ width: i <= active ? "100%" : "0%" }}
-                      transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-                    />
-                  </button>
-                ))}
-              </div>
-
-              {/* Controls */}
-              <div className="mt-6 flex items-center justify-between border-t border-white/10 pt-5">
-                <button
-                  type="button"
-                  onClick={() => setPlaying((p) => !p)}
-                  className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-white/75 transition-colors hover:bg-white/10"
-                >
-                  {playing ? (
-                    <Pause className="h-3 w-3" />
-                  ) : (
-                    <Play className="h-3 w-3" />
-                  )}
-                  {playing ? "Pause loop" : "Play loop"}
-                </button>
-                <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-white/40">
-                  Click · any · node
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
+        <Outro done={done} onReplay={startRun} />
       </div>
     </section>
   );
 }
 
-// ---------- Flow diagram ----------
+// ============================================================================
+// Background — coordinates, grid, noise, ambient blue glow
+// ============================================================================
 
-function FlowDiagram({
-  active,
-  onSelect,
-}: {
-  active: number;
-  onSelect: (i: number) => void;
-}) {
+function BackgroundDecor() {
   return (
-    <svg
-      viewBox={`0 0 ${W} ${H}`}
-      className="h-auto w-full"
-      preserveAspectRatio="xMidYMid meet"
-      role="img"
-      aria-label="Automation flow diagram"
-    >
-      <defs>
-        <linearGradient id="am-active-line" x1="0" x2="1" y1="0" y2="0">
-          <stop offset="0%" stopColor="#6B8EFF" />
-          <stop offset="50%" stopColor="#1F44FF" />
-          <stop offset="100%" stopColor="#10B981" />
-        </linearGradient>
-        <filter id="am-glow" x="-50%" y="-50%" width="200%" height="200%">
-          <feGaussianBlur stdDeviation="5" result="blur" />
-          <feMerge>
-            <feMergeNode in="blur" />
-            <feMergeNode in="SourceGraphic" />
-          </feMerge>
-        </filter>
-      </defs>
-
-      {/* Background rail */}
-      <line
-        x1={nodeX(0) + nodeR}
-        y1={nodeY}
-        x2={nodeX(stages.length - 1) - nodeR}
-        y2={nodeY}
-        stroke="#FFFFFF"
-        strokeOpacity="0.08"
-        strokeWidth="3"
-        strokeLinecap="round"
+    <>
+      {/* radial blue wash */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background:
+            "radial-gradient(ellipse 60% 45% at 72% 40%, rgba(31,68,255,0.20), transparent 65%)",
+        }}
       />
-
-      {/* Active segments (fade in as stages advance) */}
-      {stages.slice(0, -1).map((_, i) => {
-        const lit = i < active;
-        return (
-          <motion.line
-            key={`seg-${i}`}
-            x1={nodeX(i) + nodeR}
-            y1={nodeY}
-            x2={nodeX(i + 1) - nodeR}
-            y2={nodeY}
-            stroke="url(#am-active-line)"
-            strokeWidth="3.5"
-            strokeLinecap="round"
-            filter="url(#am-glow)"
-            initial={false}
-            animate={{ opacity: lit ? 1 : 0 }}
-            transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
-          />
-        );
-      })}
-
-      {/* Flowing particles along every segment */}
-      {stages.slice(0, -1).map((_, i) => {
-        const x1 = nodeX(i) + nodeR;
-        const x2 = nodeX(i + 1) - nodeR;
-        const dur = 2.2 + i * 0.12;
-        const delay = i * 0.35;
-        return (
-          <g key={`flow-${i}`}>
-            <circle r="3.5" fill="#FFFFFF">
-              <animate
-                attributeName="cx"
-                values={`${x1};${x2}`}
-                dur={`${dur}s`}
-                repeatCount="indefinite"
-                begin={`${delay}s`}
-              />
-              <animate
-                attributeName="cy"
-                values={`${nodeY};${nodeY}`}
-                dur={`${dur}s`}
-                repeatCount="indefinite"
-                begin={`${delay}s`}
-              />
-              <animate
-                attributeName="opacity"
-                values="0;1;1;0"
-                dur={`${dur}s`}
-                repeatCount="indefinite"
-                begin={`${delay}s`}
-              />
-            </circle>
-          </g>
-        );
-      })}
-
-      {/* Nodes */}
-      {stages.map((s, i) => {
-        const cx = nodeX(i);
-        const cy = nodeY;
-        const isActive = i === active;
-        const isPast = i < active;
-
-        return (
-          <g
-            key={s.id}
-            onClick={() => onSelect(i)}
-            style={{ cursor: "pointer" }}
-            className="group"
-          >
-            {/* Hit target (larger, invisible) */}
-            <circle cx={cx} cy={cy} r={nodeR + 18} fill="transparent" />
-
-            {/* Pulsing halo on active */}
-            {isActive && (
-              <circle
-                cx={cx}
-                cy={cy}
-                r={nodeR + 14}
-                fill={s.color}
-                fillOpacity="0.18"
-              >
-                <animate
-                  attributeName="r"
-                  values={`${nodeR + 10};${nodeR + 22};${nodeR + 10}`}
-                  dur="2.2s"
-                  repeatCount="indefinite"
-                />
-                <animate
-                  attributeName="fill-opacity"
-                  values="0.22;0.08;0.22"
-                  dur="2.2s"
-                  repeatCount="indefinite"
-                />
-              </circle>
-            )}
-
-            {/* Outer ring */}
-            <circle
-              cx={cx}
-              cy={cy}
-              r={nodeR}
-              fill={
-                isActive
-                  ? s.color
-                  : isPast
-                    ? "rgba(31,68,255,0.18)"
-                    : "rgba(255,255,255,0.04)"
-              }
-              stroke={isActive || isPast ? s.color : "rgba(255,255,255,0.18)"}
-              strokeWidth={isActive ? "2.5" : "1.5"}
-              className="transition-all"
-            />
-
-            {/* Icon — rendered via foreignObject so we can use lucide */}
-            <foreignObject
-              x={cx - 16}
-              y={cy - 16}
-              width="32"
-              height="32"
-              pointerEvents="none"
-            >
-              <div className="flex h-8 w-8 items-center justify-center">
-                <StageIcon
-                  Icon={s.icon}
-                  active={isActive || isPast}
-                />
-              </div>
-            </foreignObject>
-
-            {/* Label below node */}
-            <text
-              x={cx}
-              y={cy + nodeR + 28}
-              textAnchor="middle"
-              fontSize="11"
-              fontFamily="ui-monospace, monospace"
-              fill="#FFFFFF"
-              fillOpacity={isActive ? 1 : 0.5}
-              letterSpacing="1.4"
-              className="transition-opacity"
-            >
-              {s.label}
-            </text>
-          </g>
-        );
-      })}
-    </svg>
+      {/* tech grid */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 opacity-[0.05]"
+        style={{
+          backgroundImage:
+            "linear-gradient(to right, #fff 1px, transparent 1px), linear-gradient(to bottom, #fff 1px, transparent 1px)",
+          backgroundSize: "72px 72px",
+          maskImage:
+            "radial-gradient(ellipse 75% 70% at 50% 50%, black, transparent)",
+          WebkitMaskImage:
+            "radial-gradient(ellipse 75% 70% at 50% 50%, black, transparent)",
+        }}
+      />
+      {/* corner coordinates — schematic frame */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 hidden text-white/20 sm:block"
+      >
+        <span className="absolute left-8 top-8 font-mono text-[10px] uppercase tracking-[0.22em]">
+          lat 40.7128 · lng −74.0060
+        </span>
+        <span className="absolute right-8 top-8 font-mono text-[10px] uppercase tracking-[0.22em]">
+          run · 2874 / 12,401
+        </span>
+        <span className="absolute bottom-8 left-8 font-mono text-[10px] uppercase tracking-[0.22em]">
+          nexin · ops deck
+        </span>
+        <span className="absolute bottom-8 right-8 font-mono text-[10px] uppercase tracking-[0.22em]">
+          rev 0.1 · 26q2
+        </span>
+      </div>
+    </>
   );
 }
 
-function StageIcon({
-  Icon,
-  active,
+// ============================================================================
+// Header — editorial intro
+// ============================================================================
+
+function SectionHeader() {
+  return (
+    <div className="mx-auto max-w-3xl text-center">
+      <p className="inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.22em] text-blue">
+        <span className="relative flex h-1.5 w-1.5">
+          <span className="absolute inset-0 animate-ping rounded-full bg-blue opacity-70" />
+          <span className="relative h-1.5 w-1.5 rounded-full bg-blue" />
+        </span>
+        Live trace · run #2874 · replaying now
+      </p>
+      <h2 className="mt-6 text-balance font-display text-display-xs font-semibold leading-[0.95] sm:text-display-sm md:text-display-md">
+        One lead.
+        <br />
+        <span className="font-serif italic text-blue">Six seconds.</span>
+      </h2>
+      <p className="mx-auto mt-6 max-w-xl text-pretty text-[17px] leading-[1.55] text-white/55">
+        Watch a real lead move through the stack — from pricing-page hit to
+        meeting on the calendar. Same tools you already use. None of the
+        copy-paste.
+      </p>
+    </div>
+  );
+}
+
+// ============================================================================
+// Lead Dossier — cream "paper" card, reveals fields progressively
+// ============================================================================
+
+function LeadDossier({
+  filled,
+  done,
 }: {
-  Icon: LucideIcon;
-  active: boolean;
+  filled: Set<string>;
+  done: boolean;
 }) {
   return (
-    <Icon
-      className="h-5 w-5"
-      color={active ? "#FFFFFF" : "rgba(255,255,255,0.55)"}
-      strokeWidth={2}
-    />
+    <div className="relative lg:sticky lg:top-24 lg:self-start">
+      {/* Tape at top-left — small design flourish */}
+      <div
+        aria-hidden
+        className="absolute -left-4 -top-3 z-20 h-6 w-24 -rotate-6 bg-blue/70 shadow-[0_4px_18px_-6px_rgba(31,68,255,0.6)]"
+        style={{
+          backgroundImage:
+            "repeating-linear-gradient(45deg, rgba(255,255,255,0.1) 0 4px, transparent 4px 8px)",
+        }}
+      />
+
+      <div
+        className="relative overflow-hidden rounded-2xl bg-[#F6F1E7] text-[#0A0C12] shadow-[0_30px_80px_-30px_rgba(0,0,0,0.7)]"
+        style={{
+          backgroundImage:
+            "radial-gradient(rgba(10,12,18,0.045) 1px, transparent 1px)",
+          backgroundSize: "18px 18px",
+        }}
+      >
+        {/* Header bar */}
+        <div className="flex items-center justify-between border-b border-black/10 px-6 pb-3 pt-5">
+          <div className="flex items-center gap-2 font-mono text-[9px] uppercase tracking-[0.18em] text-black/50">
+            <span className="h-1.5 w-1.5 rounded-full bg-[#E11D48]" />
+            Confidential · lead file
+          </div>
+          <div className="font-mono text-[9px] uppercase tracking-[0.18em] text-black/50">
+            RUN · 2874
+          </div>
+        </div>
+
+        {/* Body */}
+        <div className="relative px-6 pb-7 pt-6 sm:px-8">
+          {/* Identity block */}
+          <div className="flex items-start gap-4">
+            <div className="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-2xl bg-[#0A0C12] font-display text-[18px] font-semibold tracking-tight text-[#F6F1E7]">
+              AR
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="font-mono text-[9px] uppercase tracking-[0.2em] text-black/45">
+                Subject
+              </p>
+              <h3 className="mt-1 font-display text-[28px] font-semibold leading-[1] tracking-[-0.035em] text-black">
+                Alex Rivera
+              </h3>
+              <p className="mt-1 text-[13px] leading-[1.4] text-black/60">
+                Head of Operations · Acme Robotics
+              </p>
+            </div>
+          </div>
+
+          {/* Divider with label */}
+          <div className="mt-7 flex items-center gap-3">
+            <span className="font-mono text-[9px] uppercase tracking-[0.2em] text-black/45">
+              Dossier
+            </span>
+            <div className="h-px flex-1 bg-black/10" />
+          </div>
+
+          {/* Field table — fills progressively */}
+          <dl className="mt-4 space-y-[11px]">
+            {dossierFields.map((f) => (
+              <DossierRow key={f.key} field={f} visible={filled.has(f.key)} />
+            ))}
+          </dl>
+
+          {/* Draft preview (appears when AI drafts it) */}
+          <div className="mt-6">
+            <AnimatePresence>
+              {filled.has("draft") && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0, y: 8 }}
+                  animate={{ opacity: 1, height: "auto", y: 0 }}
+                  exit={{ opacity: 0, height: 0 }}
+                  transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                  className="overflow-hidden"
+                >
+                  <div className="rounded-xl border border-black/10 bg-white/60 p-4">
+                    <p className="font-mono text-[9px] uppercase tracking-[0.18em] text-black/45">
+                      Draft · 74 words · confidence 94%
+                    </p>
+                    <p className="mt-2 font-serif text-[14px] italic leading-[1.5] text-black/80">
+                      &ldquo;Hey Alex — saw you&apos;re scaling ops at Acme
+                      right after the Series B. We just helped Helix book 47
+                      meetings in their first month on autopilot. Worth a
+                      15-minute look?&rdquo;
+                    </p>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        </div>
+
+        {/* CONVERTED stamp */}
+        <AnimatePresence>
+          {done && (
+            <motion.div
+              initial={{ opacity: 0, scale: 1.4, rotate: -4 }}
+              animate={{ opacity: 1, scale: 1, rotate: -8 }}
+              transition={{
+                duration: 0.55,
+                ease: [0.16, 1, 0.3, 1],
+                delay: 0.1,
+              }}
+              className="pointer-events-none absolute right-6 top-1/2 -translate-y-1/2 sm:right-10"
+              aria-hidden
+            >
+              <div className="relative">
+                <div className="rounded-md border-[3px] border-[#D1342F] px-4 py-2 text-[#D1342F] shadow-[0_0_0_2px_#F6F1E7_inset] mix-blend-multiply">
+                  <p className="font-display text-[22px] font-semibold uppercase leading-none tracking-[0.18em]">
+                    Converted
+                  </p>
+                  <p className="mt-1 text-center font-mono text-[9px] uppercase tracking-[0.18em]">
+                    5.8s · $24k pipeline
+                  </p>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    </div>
+  );
+}
+
+function DossierRow({
+  field,
+  visible,
+}: {
+  field: DossierField;
+  visible: boolean;
+}) {
+  const statusEmphasis = field.key === "status" && visible;
+  return (
+    <div className="grid grid-cols-[96px_1fr] items-baseline gap-3">
+      <dt className="font-mono text-[10px] uppercase tracking-[0.16em] text-black/45">
+        {field.label}
+      </dt>
+      <dd className="relative min-h-[20px] overflow-hidden">
+        <AnimatePresence>
+          {visible ? (
+            <motion.span
+              key="v"
+              initial={{ opacity: 0, y: 8, filter: "blur(4px)" }}
+              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+              transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+              className={`block text-[14px] leading-[1.35] ${
+                statusEmphasis
+                  ? "font-display font-semibold tracking-[-0.02em] text-[#10713C]"
+                  : "text-black/85"
+              }`}
+            >
+              {field.value}
+            </motion.span>
+          ) : (
+            <motion.span
+              key="e"
+              className="block h-[2px] w-12 translate-y-[9px] rounded bg-black/15"
+              initial={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+            />
+          )}
+        </AnimatePresence>
+      </dd>
+    </div>
+  );
+}
+
+// ============================================================================
+// Event Stream — dark "terminal" with streaming events
+// ============================================================================
+
+function EventStream({
+  visible,
+  totalCount,
+  done,
+}: {
+  visible: TraceEvent[];
+  totalCount: number;
+  done: boolean;
+}) {
+  return (
+    <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-[#0F1117]/90 shadow-[0_30px_80px_-30px_rgba(0,0,0,0.8)] backdrop-blur">
+      {/* Terminal-style header */}
+      <div className="flex items-center justify-between border-b border-white/10 px-6 pb-3 pt-5">
+        <div className="flex items-center gap-2">
+          <span className="h-2.5 w-2.5 rounded-full bg-[#ff5f57]" />
+          <span className="h-2.5 w-2.5 rounded-full bg-[#febc2e]" />
+          <span className="h-2.5 w-2.5 rounded-full bg-[#28c840]" />
+          <span className="ml-3 font-mono text-[10px] uppercase tracking-[0.18em] text-white/50">
+            nexin.trace · event_stream
+          </span>
+        </div>
+        <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.16em] text-white/40">
+          <span>{Math.max(0, visible.length)}</span>
+          <span className="text-white/20">/</span>
+          <span>{totalCount}</span>
+        </div>
+      </div>
+
+      {/* Events */}
+      <div className="relative px-4 pb-5 pt-2 sm:px-6">
+        <ol className="relative">
+          {/* Vertical rail */}
+          <span
+            aria-hidden
+            className="absolute bottom-6 left-[26px] top-6 w-px bg-gradient-to-b from-white/10 via-white/20 to-white/5 sm:left-[30px]"
+          />
+
+          <AnimatePresence initial={false}>
+            {visible.map((e, i) => (
+              <EventRow
+                key={e.slug}
+                event={e}
+                index={i}
+                isLatest={i === visible.length - 1 && !done}
+              />
+            ))}
+          </AnimatePresence>
+
+          {/* Cursor row — shows when running but no event yet */}
+          {visible.length < totalCount && (
+            <li className="flex items-center gap-4 py-3 pl-[52px] font-mono text-[11px] uppercase tracking-[0.18em] text-white/40 sm:pl-[60px]">
+              <span className="inline-block h-3 w-[2px] animate-pulse bg-blue" />
+              awaiting next event…
+            </li>
+          )}
+        </ol>
+
+        {/* Footer totals — after done */}
+        <AnimatePresence>
+          {done && (
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+              className="mt-4 border-t border-white/10 pt-4"
+            >
+              <div className="grid grid-cols-3 gap-4">
+                <Metric label="Latency" value="5.8s" />
+                <Metric label="Tools touched" value="6" />
+                <Metric label="Human keystrokes" value="0" />
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    </div>
+  );
+}
+
+function EventRow({
+  event,
+  index,
+  isLatest,
+}: {
+  event: TraceEvent;
+  index: number;
+  isLatest: boolean;
+}) {
+  const { Icon, name, color } = event.brand;
+  return (
+    <motion.li
+      initial={{ opacity: 0, y: 14, filter: "blur(6px)" }}
+      animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+      exit={{ opacity: 0, y: -10 }}
+      transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
+      className="relative grid grid-cols-[60px_1fr] gap-4 py-3 sm:grid-cols-[68px_1fr]"
+    >
+      {/* Timestamp */}
+      <div className="pt-1 text-right font-mono text-[11px] tabular-nums text-white/40">
+        {event.t}
+      </div>
+
+      {/* Body column with brand chip on the rail */}
+      <div className="relative min-w-0">
+        {/* Rail dot — brand colored */}
+        <span
+          aria-hidden
+          className="absolute -left-[30px] top-1 flex h-6 w-6 items-center justify-center rounded-full ring-4 ring-[#0F1117] sm:-left-[34px]"
+          style={{
+            backgroundColor: `${color}1F`,
+            boxShadow: isLatest ? `0 0 0 3px ${color}44, 0 0 24px ${color}66` : undefined,
+          }}
+        >
+          <Icon className="h-[13px] w-[13px]" style={{ color }} />
+        </span>
+
+        {/* Slug */}
+        <p className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.16em]">
+          <span style={{ color }}>{name}</span>
+          <span className="text-white/20">·</span>
+          <span className="text-white/50">{event.slug.split(" · ")[1] ?? event.slug}</span>
+        </p>
+        {/* Title */}
+        <p className="mt-1.5 font-display text-[17px] font-semibold leading-[1.25] tracking-[-0.02em] text-white sm:text-[18px]">
+          {event.title}
+        </p>
+        {/* Body */}
+        <p className="mt-1 max-w-[48ch] text-[13.5px] leading-[1.5] text-white/55">
+          {event.body}
+        </p>
+      </div>
+    </motion.li>
+  );
+}
+
+function Metric({ label, value }: { label: string; value: string }) {
+  return (
+    <div>
+      <p className="font-mono text-[9px] uppercase tracking-[0.18em] text-white/40">
+        {label}
+      </p>
+      <p className="mt-1 font-display text-[24px] font-semibold tabular-nums leading-none tracking-[-0.02em] text-white">
+        {value}
+      </p>
+    </div>
+  );
+}
+
+// ============================================================================
+// Outro — the conversion moment + CTA
+// ============================================================================
+
+function Outro({ done, onReplay }: { done: boolean; onReplay: () => void }) {
+  return (
+    <div className="relative mx-auto mt-16 max-w-[1220px]">
+      <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.02] p-7 backdrop-blur sm:p-10">
+        <div className="grid gap-8 lg:grid-cols-[1.3fr_1fr] lg:items-center lg:gap-10">
+          {/* Big contrast line */}
+          <div>
+            <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-blue">
+              The receipt
+            </p>
+            <p className="mt-4 font-display text-[30px] font-semibold leading-[1.05] tracking-[-0.03em] text-white sm:text-[42px] md:text-[52px]">
+              Nexin shipped this in{" "}
+              <span className="font-serif italic text-blue">5.8 seconds.</span>
+              <br />
+              <span className="text-white/35">
+                Your team takes{" "}
+                <span className="relative inline-block">
+                  <span className="font-serif italic">eleven days</span>
+                  <span
+                    aria-hidden
+                    className="pointer-events-none absolute left-0 right-0 top-[58%] h-[2px] -rotate-[2deg] bg-white/40"
+                  />
+                </span>
+                .
+              </span>
+            </p>
+          </div>
+
+          {/* CTAs */}
+          <div className="flex flex-col items-start gap-5 lg:items-end">
+            <Link
+              href="#contact"
+              className="group inline-flex h-14 items-center gap-2.5 rounded-full bg-white px-7 text-[14px] font-medium tracking-tight text-[#0A0C12] transition-all hover:bg-blue hover:text-white"
+            >
+              Book a strategy call
+              <ArrowUpRight className="h-4 w-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+            </Link>
+
+            <button
+              type="button"
+              onClick={onReplay}
+              className="inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-white/60 transition-colors hover:text-white"
+            >
+              <RotateCcw className="h-3 w-3" />
+              {done ? "Replay the run" : "Restart from 00.0s"}
+            </button>
+          </div>
+        </div>
+
+        {/* Outcome chip strip */}
+        <div className="mt-8 flex flex-wrap items-center gap-2 border-t border-white/10 pt-5">
+          <OutcomeChip label="Meeting booked" />
+          <OutcomeChip label="$24k pipeline added" />
+          <OutcomeChip label="0 rep-hours" />
+          <OutcomeChip label="6 tools orchestrated" />
+          <OutcomeChip label="1 happy closer" check />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function OutcomeChip({ label, check }: { label: string; check?: boolean }) {
+  return (
+    <span className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/5 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.14em] text-white/70">
+      {check && <Check className="h-3 w-3 text-emerald-400" />}
+      {label}
+    </span>
   );
 }
