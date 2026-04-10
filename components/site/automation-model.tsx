@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import {
   AnimatePresence,
@@ -8,7 +8,13 @@ import {
   useInView,
   useReducedMotion,
 } from "framer-motion";
-import { ArrowUpRight, Check, RotateCcw } from "lucide-react";
+import {
+  ArrowUpRight,
+  Check,
+  Pause,
+  Play,
+  RotateCcw,
+} from "lucide-react";
 import {
   SiHubspot,
   SiOpenai,
@@ -24,16 +30,18 @@ import type { IconType } from "react-icons";
 // ============================================================================
 
 type TraceEvent = {
-  t: string; // display timestamp e.g. "00.4s"
+  t: string; // display timestamp shown to the viewer
+  revealAt: number; // ms into the scaled playback when this event fires
   brand: { Icon: IconType; name: string; color: string };
-  slug: string; // terminal-style event name
-  title: string; // editorial title
+  slug: string;
+  title: string;
   body: string;
   fills?: string[]; // dossier field keys this event fills in
 };
 
 const events: TraceEvent[] = [
   {
+    revealAt: 300,
     t: "00.0s",
     brand: { Icon: FaLinkedin, name: "LinkedIn", color: "#0A66C2" },
     slug: "signal · pricing_page_view",
@@ -42,6 +50,7 @@ const events: TraceEvent[] = [
     fills: ["name", "role", "company", "location"],
   },
   {
+    revealAt: 1000,
     t: "00.4s",
     brand: { Icon: SiHubspot, name: "HubSpot", color: "#FF7A59" },
     slug: "enrich · dossier_built",
@@ -50,6 +59,7 @@ const events: TraceEvent[] = [
     fills: ["headcount", "stage", "stack", "intent"],
   },
   {
+    revealAt: 1900,
     t: "00.9s",
     brand: { Icon: SiOpenai, name: "OpenAI", color: "#10A37F" },
     slug: "decide · draft_generated",
@@ -58,6 +68,7 @@ const events: TraceEvent[] = [
     fills: ["draft"],
   },
   {
+    revealAt: 2800,
     t: "01.3s",
     brand: { Icon: SiGmail, name: "Gmail", color: "#EA4335" },
     slug: "act · email_sent",
@@ -65,6 +76,7 @@ const events: TraceEvent[] = [
     body: "Sent from your rep's real address, threaded under the pricing visit, tracked for replies.",
   },
   {
+    revealAt: 3500,
     t: "01.5s",
     brand: { Icon: SiSlack, name: "Slack", color: "#E01E5A" },
     slug: "notify · sales_pinged",
@@ -72,6 +84,7 @@ const events: TraceEvent[] = [
     body: "A card drops into #sales with the dossier, the draft, and a \u201ctake over\u201d button.",
   },
   {
+    revealAt: 5200,
     t: "05.8s",
     brand: { Icon: SiGooglecalendar, name: "Google Calendar", color: "#4285F4" },
     slug: "outcome · meeting_booked",
@@ -80,6 +93,9 @@ const events: TraceEvent[] = [
     fills: ["meeting", "status"],
   },
 ];
+
+const DURATION_MS = 7200;
+const LOOP_HOLD_MS = 1800;
 
 type DossierField = { key: string; label: string; value: string };
 
@@ -96,63 +112,144 @@ const dossierFields: DossierField[] = [
   { key: "status", label: "Status", value: "CONVERTED" },
 ];
 
+function formatTime(ms: number) {
+  const clamped = Math.max(0, Math.min(DURATION_MS, ms));
+  const seconds = clamped / 1000;
+  const whole = Math.floor(seconds);
+  const tenths = Math.floor((seconds - whole) * 10);
+  const mm = String(Math.floor(whole / 60)).padStart(2, "0");
+  const ss = String(whole % 60).padStart(2, "0");
+  return `${mm}:${ss}.${tenths}`;
+}
+
 // ============================================================================
 // Main section
 // ============================================================================
 
 export function AutomationModel() {
   const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { once: false, margin: "-25%" });
+  const inView = useInView(ref, { margin: "-20%" });
   const reduced = useReducedMotion();
-  // cursor: -1 = idle, 0..N-1 = events revealed, N = done
-  const [cursor, setCursor] = useState(-1);
-  const [isRunning, setIsRunning] = useState(false);
-  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const hasPlayedOnceRef = useRef(false);
 
-  const startRun = () => {
-    if (timeoutRef.current) clearTimeout(timeoutRef.current);
-    setCursor(-1);
-    setIsRunning(true);
-  };
+  const [elapsed, setElapsed] = useState(0);
+  const [playRequested, setPlayRequested] = useState(false);
+  const [loopKey, setLoopKey] = useState(0);
+  const hasAutoStartedRef = useRef(false);
 
-  // Advance cursor on a timer while running
-  useEffect(() => {
-    if (!isRunning) return;
-    if (cursor >= events.length) {
-      setIsRunning(false);
-      return;
+  const rafRef = useRef<number | null>(null);
+  const lastFrameRef = useRef<number>(0);
+  const holdRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const cancelRaf = useCallback(() => {
+    if (rafRef.current !== null) {
+      cancelAnimationFrame(rafRef.current);
+      rafRef.current = null;
     }
-    const delay = cursor === -1 ? 450 : 900;
-    timeoutRef.current = setTimeout(
-      () => setCursor((c) => c + 1),
-      delay,
-    );
-    return () => {
-      if (timeoutRef.current) clearTimeout(timeoutRef.current);
-    };
-  }, [cursor, isRunning]);
+  }, []);
+
+  const clearHold = useCallback(() => {
+    if (holdRef.current !== null) {
+      clearTimeout(holdRef.current);
+      holdRef.current = null;
+    }
+  }, []);
 
   // Auto-start once, the first time the section scrolls into view
   useEffect(() => {
-    if (!inView || hasPlayedOnceRef.current) return;
-    hasPlayedOnceRef.current = true;
+    if (!inView || hasAutoStartedRef.current) return;
+    hasAutoStartedRef.current = true;
     if (reduced) {
-      setCursor(events.length);
+      setElapsed(DURATION_MS);
     } else {
-      startRun();
+      setPlayRequested(true);
     }
   }, [inView, reduced]);
 
+  // rAF playback loop — continuous, frame-accurate progression
+  useEffect(() => {
+    if (!playRequested || !inView || reduced) {
+      cancelRaf();
+      return;
+    }
+
+    lastFrameRef.current = performance.now();
+
+    const tick = (now: number) => {
+      const dt = now - lastFrameRef.current;
+      lastFrameRef.current = now;
+      let reachedEnd = false;
+      setElapsed((prev) => {
+        const next = prev + dt;
+        if (next >= DURATION_MS) {
+          reachedEnd = true;
+          return DURATION_MS;
+        }
+        return next;
+      });
+      if (reachedEnd) {
+        rafRef.current = null;
+        clearHold();
+        holdRef.current = setTimeout(() => {
+          setElapsed(0);
+          setLoopKey((k) => k + 1);
+        }, LOOP_HOLD_MS);
+        return;
+      }
+      rafRef.current = requestAnimationFrame(tick);
+    };
+    rafRef.current = requestAnimationFrame(tick);
+
+    return () => {
+      cancelRaf();
+    };
+  }, [playRequested, inView, reduced, loopKey, cancelRaf, clearHold]);
+
+  // Tear-down on unmount
+  useEffect(() => {
+    return () => {
+      cancelRaf();
+      clearHold();
+    };
+  }, [cancelRaf, clearHold]);
+
+  const visibleCount = events.filter((e) => elapsed >= e.revealAt).length;
+  const visibleEvents = useMemo(
+    () => events.slice(0, visibleCount),
+    [visibleCount],
+  );
+  const allRevealed = visibleCount === events.length;
+  const playbackComplete = elapsed >= DURATION_MS;
+
   const filledKeys = useMemo(() => {
     const set = new Set<string>();
-    const shown = cursor >= 0 ? events.slice(0, Math.min(cursor + 1, events.length)) : [];
-    shown.forEach((e) => e.fills?.forEach((k) => set.add(k)));
+    visibleEvents.forEach((e) => e.fills?.forEach((k) => set.add(k)));
     return set;
-  }, [cursor]);
+  }, [visibleEvents]);
 
-  const done = cursor >= events.length;
-  const visibleEvents = cursor >= 0 ? events.slice(0, Math.min(cursor + 1, events.length)) : [];
+  const handlePlayPause = useCallback(() => {
+    clearHold();
+    if (playbackComplete) {
+      setElapsed(0);
+      setLoopKey((k) => k + 1);
+      setPlayRequested(true);
+      return;
+    }
+    setPlayRequested((p) => !p);
+  }, [clearHold, playbackComplete]);
+
+  const handleReplay = useCallback(() => {
+    clearHold();
+    setElapsed(0);
+    setLoopKey((k) => k + 1);
+    setPlayRequested(true);
+  }, [clearHold]);
+
+  const isPlaying = playRequested && !playbackComplete;
+  const statusText = !playRequested
+    ? "paused"
+    : playbackComplete
+      ? "complete · looping"
+      : "playing now";
 
   return (
     <section
@@ -165,23 +262,34 @@ export function AutomationModel() {
       <div className="container relative z-10">
         <SectionHeader />
 
-        <div className="relative mx-auto mt-16 grid max-w-[1220px] gap-6 lg:mt-20 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:gap-8">
-          <LeadDossier filled={filledKeys} done={done} />
-          <EventStream
-            visible={visibleEvents}
-            totalCount={events.length}
-            done={done}
+        <div className="relative mx-auto mt-14 max-w-[1220px] lg:mt-16">
+          <FrameTopBar statusText={statusText} />
+
+          <div className="relative mt-3 grid gap-6 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:gap-8">
+            <LeadDossier filled={filledKeys} done={allRevealed} />
+            <EventStream
+              visible={visibleEvents}
+              totalCount={events.length}
+              done={allRevealed}
+            />
+          </div>
+
+          <PlayerChrome
+            elapsed={elapsed}
+            playing={isPlaying}
+            onPlayPause={handlePlayPause}
+            onReplay={handleReplay}
           />
         </div>
 
-        <Outro done={done} onReplay={startRun} />
+        <Outro />
       </div>
     </section>
   );
 }
 
 // ============================================================================
-// Background — coordinates, grid, noise, ambient blue glow
+// Background — coordinates, grid, ambient blue glow
 // ============================================================================
 
 function BackgroundDecor() {
@@ -239,14 +347,7 @@ function BackgroundDecor() {
 function SectionHeader() {
   return (
     <div className="mx-auto max-w-3xl text-center">
-      <p className="inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.22em] text-blue">
-        <span className="relative flex h-1.5 w-1.5">
-          <span className="absolute inset-0 animate-ping rounded-full bg-blue opacity-70" />
-          <span className="relative h-1.5 w-1.5 rounded-full bg-blue" />
-        </span>
-        Live trace · run #2874 · replaying now
-      </p>
-      <h2 className="mt-6 text-balance font-display text-display-xs font-semibold leading-[0.95] sm:text-display-sm md:text-display-md">
+      <h2 className="text-balance font-display text-display-xs font-semibold leading-[0.95] sm:text-display-sm md:text-display-md">
         One lead.
         <br />
         <span className="font-serif italic text-blue">Six seconds.</span>
@@ -256,6 +357,32 @@ function SectionHeader() {
         meeting on the calendar. Same tools you already use. None of the
         copy-paste.
       </p>
+    </div>
+  );
+}
+
+// ============================================================================
+// Frame top bar — live-trace status strip above the frame
+// ============================================================================
+
+function FrameTopBar({ statusText }: { statusText: string }) {
+  return (
+    <div className="flex items-center justify-between px-1 font-mono text-[10px] uppercase tracking-[0.18em] text-white/45">
+      <div className="flex items-center gap-2.5">
+        <span className="relative flex h-1.5 w-1.5">
+          <span className="absolute inset-0 animate-ping rounded-full bg-blue opacity-70" />
+          <span className="relative h-1.5 w-1.5 rounded-full bg-blue" />
+        </span>
+        <span>Nexin · live trace</span>
+        <span className="text-white/20">·</span>
+        <span>run #2874</span>
+        <span className="hidden text-white/20 sm:inline">·</span>
+        <span className="hidden text-blue/80 sm:inline">{statusText}</span>
+      </div>
+      <div className="hidden items-center gap-2 sm:flex">
+        <span>REC</span>
+        <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[#E11D48]" />
+      </div>
     </div>
   );
 }
@@ -371,6 +498,7 @@ function LeadDossier({
             <motion.div
               initial={{ opacity: 0, scale: 1.4, rotate: -4 }}
               animate={{ opacity: 1, scale: 1, rotate: -8 }}
+              exit={{ opacity: 0, scale: 0.9, transition: { duration: 0.3 } }}
               transition={{
                 duration: 0.55,
                 ease: [0.16, 1, 0.3, 1],
@@ -411,12 +539,13 @@ function DossierRow({
         {field.label}
       </dt>
       <dd className="relative min-h-[20px] overflow-hidden">
-        <AnimatePresence>
+        <AnimatePresence mode="wait">
           {visible ? (
             <motion.span
               key="v"
               initial={{ opacity: 0, y: 8, filter: "blur(4px)" }}
               animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+              exit={{ opacity: 0, transition: { duration: 0.2 } }}
               transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
               className={`block text-[14px] leading-[1.35] ${
                 statusEmphasis
@@ -431,6 +560,7 @@ function DossierRow({
               key="e"
               className="block h-[2px] w-12 translate-y-[9px] rounded bg-black/15"
               initial={{ opacity: 1 }}
+              animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
             />
           )}
@@ -486,13 +616,12 @@ function EventStream({
               <EventRow
                 key={e.slug}
                 event={e}
-                index={i}
                 isLatest={i === visible.length - 1 && !done}
               />
             ))}
           </AnimatePresence>
 
-          {/* Cursor row — shows when running but no event yet */}
+          {/* Cursor row — shows while more events are pending */}
           {visible.length < totalCount && (
             <li className="flex items-center gap-4 py-3 pl-[52px] font-mono text-[11px] uppercase tracking-[0.18em] text-white/40 sm:pl-[60px]">
               <span className="inline-block h-3 w-[2px] animate-pulse bg-blue" />
@@ -501,12 +630,13 @@ function EventStream({
           )}
         </ol>
 
-        {/* Footer totals — after done */}
+        {/* Footer totals — after all events revealed */}
         <AnimatePresence>
           {done && (
             <motion.div
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 8, transition: { duration: 0.3 } }}
               transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
               className="mt-4 border-t border-white/10 pt-4"
             >
@@ -525,11 +655,9 @@ function EventStream({
 
 function EventRow({
   event,
-  index,
   isLatest,
 }: {
   event: TraceEvent;
-  index: number;
   isLatest: boolean;
 }) {
   const { Icon, name, color } = event.brand;
@@ -554,7 +682,9 @@ function EventRow({
           className="absolute -left-[30px] top-1 flex h-6 w-6 items-center justify-center rounded-full ring-4 ring-[#0F1117] sm:-left-[34px]"
           style={{
             backgroundColor: `${color}1F`,
-            boxShadow: isLatest ? `0 0 0 3px ${color}44, 0 0 24px ${color}66` : undefined,
+            boxShadow: isLatest
+              ? `0 0 0 3px ${color}44, 0 0 24px ${color}66`
+              : undefined,
           }}
         >
           <Icon className="h-[13px] w-[13px]" style={{ color }} />
@@ -564,7 +694,9 @@ function EventRow({
         <p className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.16em]">
           <span style={{ color }}>{name}</span>
           <span className="text-white/20">·</span>
-          <span className="text-white/50">{event.slug.split(" · ")[1] ?? event.slug}</span>
+          <span className="text-white/50">
+            {event.slug.split(" · ")[1] ?? event.slug}
+          </span>
         </p>
         {/* Title */}
         <p className="mt-1.5 font-display text-[17px] font-semibold leading-[1.25] tracking-[-0.02em] text-white sm:text-[18px]">
@@ -593,15 +725,116 @@ function Metric({ label, value }: { label: string; value: string }) {
 }
 
 // ============================================================================
-// Outro — the conversion moment + CTA
+// Player chrome — video-like controls under the frame
 // ============================================================================
 
-function Outro({ done, onReplay }: { done: boolean; onReplay: () => void }) {
+function PlayerChrome({
+  elapsed,
+  playing,
+  onPlayPause,
+  onReplay,
+}: {
+  elapsed: number;
+  playing: boolean;
+  onPlayPause: () => void;
+  onReplay: () => void;
+}) {
+  const progress = Math.min(1, elapsed / DURATION_MS);
+  const current = formatTime(elapsed);
+  const total = formatTime(DURATION_MS);
+
+  return (
+    <div className="mt-5 rounded-2xl border border-white/10 bg-black/40 px-4 py-3.5 backdrop-blur sm:px-5 sm:py-4">
+      <div className="flex items-center gap-3 sm:gap-4">
+        <button
+          type="button"
+          onClick={onPlayPause}
+          aria-label={playing ? "Pause trace" : "Play trace"}
+          className="group flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-white text-[#0A0C12] transition-all hover:scale-[1.06] hover:bg-blue hover:text-white"
+        >
+          {playing ? (
+            <Pause className="h-4 w-4" fill="currentColor" strokeWidth={0} />
+          ) : (
+            <Play
+              className="h-4 w-4 translate-x-[1px]"
+              fill="currentColor"
+              strokeWidth={0}
+            />
+          )}
+        </button>
+
+        <div className="hidden font-mono text-[11px] tabular-nums text-white/60 sm:block">
+          <span className="text-white/90">{current}</span>
+          <span className="mx-1.5 text-white/20">/</span>
+          <span>{total}</span>
+        </div>
+
+        <Scrubber progress={progress} />
+
+        <div className="hidden font-mono text-[10px] uppercase tracking-[0.16em] text-white/40 md:block">
+          1×
+        </div>
+
+        <button
+          type="button"
+          onClick={onReplay}
+          aria-label="Replay from start"
+          className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full border border-white/15 text-white/60 transition-all hover:border-white/40 hover:text-white"
+        >
+          <RotateCcw className="h-3.5 w-3.5" />
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function Scrubber({ progress }: { progress: number }) {
+  const pct = Math.min(100, Math.max(0, progress * 100));
+  return (
+    <div className="relative h-3 flex-1">
+      {/* Track */}
+      <div className="absolute inset-x-0 top-1/2 h-[2px] -translate-y-1/2 rounded-full bg-white/10" />
+      {/* Event tick marks — brand colored */}
+      {events.map((e) => {
+        const left = (e.revealAt / DURATION_MS) * 100;
+        return (
+          <span
+            key={e.slug}
+            aria-hidden
+            className="absolute top-1/2 h-[8px] w-[2px] -translate-x-1/2 -translate-y-1/2 rounded-full"
+            style={{
+              left: `${left}%`,
+              backgroundColor: e.brand.color,
+              opacity: 0.55,
+            }}
+          />
+        );
+      })}
+      {/* Filled portion */}
+      <div
+        className="absolute left-0 top-1/2 h-[2px] -translate-y-1/2 rounded-full bg-gradient-to-r from-blue to-white"
+        style={{ width: `${pct}%` }}
+      />
+      {/* Playhead */}
+      <div
+        className="absolute top-1/2 -translate-x-1/2 -translate-y-1/2"
+        style={{ left: `${pct}%` }}
+      >
+        <div className="h-3 w-3 rounded-full bg-white shadow-[0_0_0_3px_rgba(31,68,255,0.35),0_0_16px_rgba(31,68,255,0.8)]" />
+      </div>
+    </div>
+  );
+}
+
+// ============================================================================
+// Outro — conversion moment + CTA
+// ============================================================================
+
+function Outro() {
   return (
     <div className="relative mx-auto mt-16 max-w-[1220px]">
       <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.02] p-7 backdrop-blur sm:p-10">
         <div className="grid gap-8 lg:grid-cols-[1.3fr_1fr] lg:items-center lg:gap-10">
-          {/* Big contrast line */}
           <div>
             <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-blue">
               The receipt
@@ -624,8 +857,7 @@ function Outro({ done, onReplay }: { done: boolean; onReplay: () => void }) {
             </p>
           </div>
 
-          {/* CTAs */}
-          <div className="flex flex-col items-start gap-5 lg:items-end">
+          <div className="flex flex-col items-start gap-4 lg:items-end">
             <Link
               href="#contact"
               className="group inline-flex h-14 items-center gap-2.5 rounded-full bg-white px-7 text-[14px] font-medium tracking-tight text-[#0A0C12] transition-all hover:bg-blue hover:text-white"
@@ -633,19 +865,12 @@ function Outro({ done, onReplay }: { done: boolean; onReplay: () => void }) {
               Book a strategy call
               <ArrowUpRight className="h-4 w-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
             </Link>
-
-            <button
-              type="button"
-              onClick={onReplay}
-              className="inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-white/60 transition-colors hover:text-white"
-            >
-              <RotateCcw className="h-3 w-3" />
-              {done ? "Replay the run" : "Restart from 00.0s"}
-            </button>
+            <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-white/40">
+              No deck. No discovery maze. Just the run.
+            </p>
           </div>
         </div>
 
-        {/* Outcome chip strip */}
         <div className="mt-8 flex flex-wrap items-center gap-2 border-t border-white/10 pt-5">
           <OutcomeChip label="Meeting booked" />
           <OutcomeChip label="$24k pipeline added" />
