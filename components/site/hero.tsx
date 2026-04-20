@@ -3,8 +3,20 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowUpRight, Calendar, Sparkles } from "lucide-react";
+import { ArrowUpRight, Calendar } from "lucide-react";
 import { Magnetic } from "@/components/ui/magnetic";
+import {
+  SiHubspot,
+  SiSalesforce,
+  SiOpenai,
+  SiAnthropic,
+  SiSlack,
+  SiGmail,
+  SiNotion,
+  SiZapier,
+  SiGooglecalendar,
+} from "react-icons/si";
+import { FaLinkedin } from "react-icons/fa";
 
 const verbs = ["sover.", "skalerer.", "leverer.", "vinner."];
 
@@ -94,23 +106,39 @@ export function Hero() {
           </Link>
         </div>
 
-        {/* Trust micro-row */}
-        <div className="mt-14 flex flex-col items-center gap-4">
-          <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-muted-fg/80">
-            <Sparkles className="h-3 w-3" />
-            Betrodd av 40+ team som leverer ekte inntekter
+        {/* Integration row */}
+        <div className="mt-16 flex flex-col items-center gap-5">
+          <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.22em] text-muted-fg/80">
+            <span className="relative flex h-1.5 w-1.5">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-blue/60 opacity-70" />
+              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-blue" />
+            </span>
+            Kobles til stacken du allerede kjører
           </div>
-          <div className="flex flex-wrap items-center justify-center gap-x-10 gap-y-3 text-fg/60">
-            {["Northwind", "Helix", "Forge & Co.", "Atlas", "Lumen", "Vantage"].map(
-              (n) => (
-                <span
-                  key={n}
-                  className="font-display text-[18px] font-semibold tracking-[-0.03em]"
-                >
-                  {n}
+          <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-4 text-fg/55 sm:gap-x-10">
+            {[
+              { Icon: SiHubspot, name: "HubSpot" },
+              { Icon: SiSalesforce, name: "Salesforce" },
+              { Icon: SiOpenai, name: "OpenAI" },
+              { Icon: SiAnthropic, name: "Anthropic" },
+              { Icon: FaLinkedin, name: "LinkedIn" },
+              { Icon: SiGmail, name: "Gmail" },
+              { Icon: SiGooglecalendar, name: "Calendar" },
+              { Icon: SiSlack, name: "Slack" },
+              { Icon: SiNotion, name: "Notion" },
+              { Icon: SiZapier, name: "Zapier" },
+            ].map(({ Icon, name }) => (
+              <div
+                key={name}
+                className="group flex items-center gap-2 transition-colors hover:text-fg"
+                aria-label={name}
+              >
+                <Icon className="h-[18px] w-[18px]" />
+                <span className="font-display text-[15px] font-semibold tracking-[-0.025em]">
+                  {name}
                 </span>
-              ),
-            )}
+              </div>
+            ))}
           </div>
         </div>
       </div>

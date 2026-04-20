@@ -24,9 +24,20 @@ import {
   Search,
   Send,
   Sparkles,
-  TrendingUp,
   Zap,
 } from "lucide-react";
+import {
+  SiHubspot,
+  SiSalesforce,
+  SiOpenai,
+  SiAnthropic,
+  SiSlack,
+  SiGmail,
+  SiNotion,
+  SiZapier,
+  SiGooglecalendar,
+} from "react-icons/si";
+import { FaLinkedin } from "react-icons/fa";
 import { SiteNav } from "@/components/site/nav";
 import { SiteFooter } from "@/components/site/footer";
 
@@ -36,16 +47,16 @@ const formatClock = (d: Date) =>
   ).padStart(2, "0")}`;
 
 const feedSeed = [
-  { tag: "BOOKED", who: "Alex T. · Sequoia Works", meta: "Onsdag 14:00", tone: "blue" },
-  { tag: "REPLIED", who: "Sarah K. · Northwind", meta: "“send meg tider”", tone: "fg" },
+  { tag: "BOOKED", who: "Alex T. · Acme Robotics", meta: "Onsdag 14:00", tone: "blue" },
+  { tag: "REPLIED", who: "Sarah K. · Fjord Studio", meta: "“send meg tider”", tone: "fg" },
   { tag: "ENRICHED", who: "42 leads · HubSpot", meta: "intensjon + stack", tone: "mute" },
   { tag: "SENT", who: "180 e-poster · steg 2", meta: "alle personalisert", tone: "mute" },
-  { tag: "BOOKED", who: "Marcus V. · Helix", meta: "Torsdag 10:30", tone: "blue" },
-  { tag: "REPLIED", who: "Ida H. · Lumen", meta: "“har 15 min fredag”", tone: "fg" },
-  { tag: "BOOKED", who: "Jonas L. · Vantage", meta: "Fredag 09:15", tone: "blue" },
-  { tag: "ENRICHED", who: "88 leads · Clearbit", meta: "finansiering + HC", tone: "mute" },
+  { tag: "BOOKED", who: "Marcus V. · Nordhavn Labs", meta: "Torsdag 10:30", tone: "blue" },
+  { tag: "REPLIED", who: "Ida H. · Tinden Systems", meta: "“har 15 min fredag”", tone: "fg" },
+  { tag: "BOOKED", who: "Jonas L. · Kodeby", meta: "Fredag 09:15", tone: "blue" },
+  { tag: "ENRICHED", who: "88 leads · Apollo + Clay", meta: "finansiering + HC", tone: "mute" },
   { tag: "SENT", who: "240 LinkedIn DMs", meta: "dag-2 oppfølging", tone: "mute" },
-  { tag: "BOOKED", who: "Nora F. · Atlas", meta: "Tirsdag 11:00", tone: "blue" },
+  { tag: "BOOKED", who: "Nora F. · Beringen", meta: "Tirsdag 11:00", tone: "blue" },
 ];
 
 function LiveOpsCard() {
@@ -184,7 +195,7 @@ function LiveOpsCard() {
           <div className="h-6 w-6 rounded-full bg-gradient-to-br from-blue to-blue-ink" />
           <div>
             <p className="text-[13px] font-medium text-fg">Alex Thorvaldsen</p>
-            <p className="font-mono text-[10px] text-muted-fg">VP Sales · Sequoia Works</p>
+            <p className="font-mono text-[10px] text-muted-fg">VP Sales · Acme Robotics</p>
           </div>
         </div>
       </motion.div>
@@ -303,7 +314,7 @@ function BerikVisual() {
           <div className="min-w-0 flex-1">
             <p className="text-[14px] font-semibold text-fg">Alex Thorvaldsen</p>
             <p className="truncate font-mono text-[10px] uppercase tracking-[0.16em] text-muted-fg">
-              Sequoia Works · Oslo
+              Acme Robotics · Oslo
             </p>
           </div>
           <span className="rounded-full bg-blue/10 px-2 py-0.5 font-mono text-[9px] uppercase tracking-[0.18em] text-blue">
@@ -335,11 +346,11 @@ function BerikVisual() {
 function NaaVisual() {
   const body = `Hei Alex,
 
-så Sequoia kunngjorde Serie B forrige uke — gratulerer. Et team
+så Acme kunngjorde Serie B forrige uke — gratulerer. Et team
 som deres vokser fort, og kalde SDR-leads pleier å bli en ops-skatt.
 
-Vi bygde en AI SDR for Helix som booker 40+ møter/mnd — null maler,
-null robot-tone. Åpent for 20 minutter tirsdag?
+Vi bygde en AI SDR for et lignende team som nå booker 40+ møter/mnd
+— null maler, null robot-tone. Åpent for 20 minutter tirsdag?
 
 — Mustafa`;
 
@@ -563,9 +574,9 @@ export default function LeadGenPage() {
                 {/* Inline proof */}
                 <div className="mt-14 flex flex-wrap items-center gap-x-8 gap-y-4 border-t-hair pt-8">
                   {[
-                    { k: "1 800+", l: "møter i klientkalendere" },
-                    { k: "12 mnd", l: "dokumentert motor" },
-                    { k: "40+", l: "aktive kunder" },
+                    { k: "24/7", l: "AI SDR aktiv" },
+                    { k: "30+", l: "native integrasjoner" },
+                    { k: "100%", l: "menneske-godkjent" },
                   ].map((p) => (
                     <div key={p.l} className="flex items-baseline gap-2">
                       <span className="font-display text-[22px] font-semibold tracking-tight text-fg">
@@ -748,7 +759,7 @@ export default function LeadGenPage() {
             <div className="mx-auto grid max-w-6xl gap-12 lg:grid-cols-[1.5fr_1fr] lg:gap-20">
               <div>
                 <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-blue">
-                  Fra kunden · Helix
+                  Kundecase · anonymisert
                 </p>
                 <blockquote className="mt-8 text-balance font-display text-[34px] font-semibold leading-[1.1] tracking-[-0.03em] text-fg sm:text-[48px]">
                   “Vi gikk fra <span className="font-serif italic text-blue">3 møter i måneden</span> til
@@ -756,11 +767,13 @@ export default function LeadGenPage() {
                   ikke et verktøy. Det er et team.”
                 </blockquote>
                 <div className="mt-10 flex items-center gap-4">
-                  <div className="h-12 w-12 rounded-full bg-gradient-to-br from-blue to-blue-ink" />
+                  <div className="flex h-12 w-12 items-center justify-center rounded-full border-hair bg-cream font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-fg">
+                    CRO
+                  </div>
                   <div>
-                    <p className="text-[14px] font-semibold text-fg">Kristine Aas</p>
+                    <p className="text-[14px] font-semibold text-fg">CRO · B2B SaaS-kunde</p>
                     <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-muted-fg">
-                      CRO · Helix Analytics
+                      Nordisk marked · ~$8M ARR
                     </p>
                   </div>
                 </div>
@@ -887,15 +900,35 @@ export default function LeadGenPage() {
               </Link>
             </div>
 
-            <div className="mt-20 flex flex-wrap items-center justify-center gap-x-10 gap-y-3 border-t border-white/[0.08] pt-10 text-bg/50">
-              {["Northwind", "Helix", "Forge & Co.", "Atlas", "Lumen", "Vantage"].map((n) => (
-                <span
-                  key={n}
-                  className="font-display text-[16px] font-semibold tracking-[-0.02em]"
-                >
-                  {n}
-                </span>
-              ))}
+            <div className="mt-20 border-t border-white/[0.08] pt-10">
+              <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-bg/45">
+                Kobles til stacken du allerede kjører
+              </p>
+              <div className="mt-6 flex flex-wrap items-center justify-center gap-x-8 gap-y-4 text-bg/55 sm:gap-x-10">
+                {[
+                  { Icon: SiHubspot, name: "HubSpot" },
+                  { Icon: SiSalesforce, name: "Salesforce" },
+                  { Icon: SiOpenai, name: "OpenAI" },
+                  { Icon: SiAnthropic, name: "Anthropic" },
+                  { Icon: FaLinkedin, name: "LinkedIn" },
+                  { Icon: SiGmail, name: "Gmail" },
+                  { Icon: SiGooglecalendar, name: "Calendar" },
+                  { Icon: SiSlack, name: "Slack" },
+                  { Icon: SiNotion, name: "Notion" },
+                  { Icon: SiZapier, name: "Zapier" },
+                ].map(({ Icon, name }) => (
+                  <div
+                    key={name}
+                    className="flex items-center gap-2 transition-colors hover:text-bg"
+                    aria-label={name}
+                  >
+                    <Icon className="h-[18px] w-[18px]" />
+                    <span className="font-display text-[15px] font-semibold tracking-[-0.02em]">
+                      {name}
+                    </span>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </section>

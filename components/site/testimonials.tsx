@@ -8,23 +8,23 @@ const quotes = [
   {
     quote:
       "Nexin erstattet to SDR-er og en deltids ops-konsulent i vår første måned. Lead-gen-motoren har satt 47 kvalifiserte møter i kalenderen vår de siste 30 dagene alene.",
-    name: "Maya Chen",
+    initials: "VS",
     role: "Vekstsjef",
-    company: "Northwind Labs",
+    company: "B2B SaaS · Nordisk marked",
   },
   {
     quote:
       "Vi prøvde tre andre AI-byråer før Nexin. De solgte presentasjoner. Nexin leverte et fungerende system på tre uker. Det er ikke engang i nærheten.",
-    name: "David Okafor",
+    initials: "GR",
     role: "Grunnlegger & CEO",
-    company: "Helix Robotics",
+    company: "Hardware-scaleup · Oslo",
   },
   {
     quote:
       "ROI var tydelig innen uke seks. I løpet av måned tre hadde vi ansatt to reps bare for å håndtere inboundsene systemet genererte.",
-    name: "Sara Linde",
+    initials: "SS",
     role: "Salgssjef",
-    company: "Forge & Co.",
+    company: "Proffservices · 50–200 ansatte",
   },
 ];
 
@@ -87,7 +87,7 @@ export function Testimonials() {
         <div className="mt-16 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
           {quotes.map((q, idx) => (
             <TiltCard
-              key={q.name}
+              key={q.company}
               className={`${idx === 1 ? "lg:translate-y-8" : ""}`}
             >
               <figure
@@ -104,23 +104,21 @@ export function Testimonials() {
                   </blockquote>
                 </div>
                 <figcaption className="mt-10 flex items-center gap-3 border-t-hair pt-6">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-fg font-mono text-[12px] font-semibold text-bg">
-                    {q.name
-                      .split(" ")
-                      .map((n) => n[0])
-                      .join("")}
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-fg font-mono text-[11px] font-semibold tracking-[0.08em] text-bg">
+                    {q.initials}
                   </div>
                   <div>
-                    <p className="text-[14px] font-medium text-fg">{q.name}</p>
-                    <p className="text-[12px] text-muted-fg">
-                      {q.role} · {q.company}
-                    </p>
+                    <p className="text-[14px] font-medium text-fg">{q.role}</p>
+                    <p className="text-[12px] text-muted-fg">{q.company}</p>
                   </div>
                 </figcaption>
               </figure>
             </TiltCard>
           ))}
         </div>
+        <p className="mt-10 text-center font-mono text-[10px] uppercase tracking-[0.22em] text-muted-fg/60">
+          Attribusjon anonymisert på kundeforespørsel
+        </p>
       </div>
     </section>
   );

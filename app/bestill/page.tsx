@@ -225,7 +225,7 @@ export default function BestillPage() {
                     “De tok oss fra 3 møter i måneden til 40+ uten å ansette en eneste SDR. Det var ikke et demo-trick — det var motoren.”
                   </p>
                   <p className="mt-3 font-mono text-[10px] uppercase tracking-[0.22em] text-muted-fg">
-                    Kristine Aas · CRO, Helix
+                    CRO · B2B SaaS-kunde · anonymisert
                   </p>
                 </div>
               </div>
