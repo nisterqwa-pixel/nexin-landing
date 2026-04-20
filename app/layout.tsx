@@ -15,14 +15,14 @@ const instrument = Instrument_Serif({
 });
 
 export const metadata: Metadata = {
-  title: "Nexin — AI Automation Studio | Lead Gen on Autopilot",
+  title: "Nexin — AI Automasjonsstudio | Lead Gen på Autopilot",
   description:
-    "Nexin is the AI automation studio for operators. Our flagship lead-gen engine puts qualified meetings on your calendar — while you sleep.",
+    "Nexin er AI-automasjonsstudioet for operatører. Vår flaggskip lead-gen-motor setter kvalifiserte møter i kalenderen din — mens du sover.",
   metadataBase: new URL("https://nexin.ai"),
   openGraph: {
-    title: "Nexin — AI Automation Studio",
+    title: "Nexin — AI Automasjonsstudio",
     description:
-      "Ship AI automations that actually move revenue. Starting with the lead-gen engine that books meetings while you sleep.",
+      "Send AI-automasjoner som faktisk beveger inntekter. Starter med lead-gen-motoren som booker møter mens du sover.",
     type: "website",
   },
 };
@@ -32,7 +32,7 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html
-      lang="en"
+      lang="no"
       className={`${GeistSans.variable} ${GeistMono.variable} ${instrument.variable}`}
     >
       <body className="min-h-screen bg-bg text-fg antialiased">

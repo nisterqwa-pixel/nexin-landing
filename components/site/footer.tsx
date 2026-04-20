@@ -3,9 +3,9 @@ import Link from "next/link";
 import { NexinLogo } from "./logo";
 
 const cols = [
-  { title: "Product", links: ["Lead Gen", "AI Outreach", "Workflow", "Voice Agents"] },
-  { title: "Company", links: ["About", "Process", "Clients", "Careers"] },
-  { title: "Resources", links: ["ROI Calculator", "Playbooks", "Changelog", "Contact"] },
+  { title: "Produkt", links: ["Lead Gen", "AI-oppsøking", "Arbeidsflyt", "Stemmeagenter"] },
+  { title: "Selskap", links: ["Om oss", "Prosess", "Kunder", "Karriere"] },
+  { title: "Ressurser", links: ["ROI-kalkulator", "Spillebøker", "Endringslogg", "Kontakt"] },
 ];
 
 export function SiteFooter() {
@@ -31,11 +31,11 @@ export function SiteFooter() {
         <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-5">
           <div className="lg:col-span-2">
             <p className="max-w-xs text-[15px] leading-[1.55] text-muted-fg">
-              The AI automation studio for operators who&apos;d rather ship than
-              talk about shipping.
+              AI-automasjonsstudioet for operatører som heller leverer
+              enn snakker om å levere.
             </p>
             <p className="mt-8 font-mono text-[10px] uppercase tracking-[0.18em] text-muted-fg/80">
-              Built for operators · Brooklyn / Oslo
+              Bygget for operatører · Brooklyn / Oslo
             </p>
           </div>
 
@@ -62,10 +62,10 @@ export function SiteFooter() {
 
         <div className="mt-16 flex flex-col items-start justify-between gap-4 border-t-hair pt-8 sm:flex-row sm:items-center">
           <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-fg/80">
-            © 2026 Nexin Labs Inc. — All rights reserved
+            © 2026 Nexin Labs Inc. — Alle rettigheter forbeholdt
           </p>
           <div className="flex items-center gap-6">
-            {["Privacy", "Terms", "SOC 2"].map((l) => (
+            {["Personvern", "Vilkår", "SOC 2"].map((l) => (
               <Link
                 key={l}
                 href="#"

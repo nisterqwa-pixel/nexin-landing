@@ -2,28 +2,28 @@ import { Hourglass, MailX, Layers } from "lucide-react";
 
 const problems = [
   {
-    label: "MANUAL DRUDGERY",
+    label: "MANUELT SLIT",
     icon: Hourglass,
-    title: "Your best people are doing robot work.",
-    body: "SDRs copy-pasting from sheets. Ops chasing statuses in Slack. Hours of human attention burned on tasks a system should own.",
-    stat: "23 hrs/wk",
-    statLabel: "wasted per employee",
+    title: "Dine beste folk gjør robotarbeid.",
+    body: "SDR-er som kopierer fra regneark. Ops som jager statuser i Slack. Timer av menneskelig oppmerksomhet brent på oppgaver et system burde eie.",
+    stat: "23 t/uke",
+    statLabel: "bortkastet per ansatt",
   },
   {
-    label: "COLD PIPELINES",
+    label: "KALD PIPELINE",
     icon: MailX,
-    title: "Your pipeline is a flat line.",
-    body: "Outbound feels like guesswork. Lists go stale. Replies trickle in. Your forecast lives on hope and one big deal that might close.",
+    title: "Pipelinen din er en flat linje.",
+    body: "Outbound føles som gjetting. Lister blir utdaterte. Svar sildrer inn. Prognosene dine lever på håp og én stor avtale som kanskje lukkes.",
     stat: "<2%",
-    statLabel: "average reply rate",
+    statLabel: "gjennomsnittlig svarrate",
   },
   {
-    label: "TOOL SPRAWL",
+    label: "VERKTØYKAOS",
     icon: Layers,
-    title: "Your stack is 14 tools that don't talk.",
-    body: "Every team bought their own SaaS. Nothing syncs. Reporting is a Frankenstein of CSVs. AI is bolted on, not built in.",
+    title: "Stacken din er 14 verktøy som ikke snakker.",
+    body: "Hvert team kjøpte sin egen SaaS. Ingenting synkroniserer. Rapportering er et Frankenstein av CSV-er. AI er skrudd på, ikke bygd inn.",
     stat: "14+",
-    statLabel: "disconnected tools",
+    statLabel: "ukoordinerte verktøy",
   },
 ];
 
@@ -33,16 +33,16 @@ export function Problem() {
       <div className="container">
         <div className="mx-auto max-w-3xl text-center">
           <p className="mb-4 font-mono text-[10px] uppercase tracking-[0.2em] text-amber-400/80">
-            // The cost of doing nothing
+            // Kostnaden ved å ikke gjøre noe
           </p>
           <h2 className="text-balance text-4xl font-semibold tracking-tighter sm:text-5xl md:text-6xl">
-            You&apos;re paying $200k a year
+            Du betaler 2 mill i året
             <br />
-            for work a machine should do.
+            for arbeid en maskin burde gjøre.
           </h2>
           <p className="mt-6 text-balance text-lg text-muted-foreground">
-            Most companies don&apos;t have a strategy problem. They have an
-            execution problem — and the bottleneck is human bandwidth.
+            De fleste selskaper har ikke et strategiproblem. De har et
+            utførelsesproblem — og flaskehalsen er menneskelig kapasitet.
           </p>
         </div>
 

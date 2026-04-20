@@ -50,25 +50,25 @@ function Bubble({
 
 const cards = [
   {
-    label: "TOOL SPRAWL",
-    title: "Your stack is the bottleneck",
-    body: "Slack, HubSpot, Notion, Sheets, Gmail. Every team bought their own SaaS and now nothing talks. Nexin wires them together so context flows where it has to.",
+    label: "VERKTØYKAOS",
+    title: "Stacken din er flaskehalsen",
+    body: "Slack, HubSpot, Notion, Sheets, Gmail. Hvert team kjøpte sin egen SaaS og nå snakker ingenting sammen. Nexin kobler dem slik at kontekst flyter dit den må.",
     stat: "14+",
-    statSuffix: "tools, zero glue",
+    statSuffix: "verktøy, null lim",
   },
   {
-    label: "COLD PIPELINE",
-    title: "Lead gen without the grind",
-    body: "Lists go stale. Templates flop. Reps burn out. Nexin runs the find → enrich → reach → book loop on autopilot — your calendar fills while you sleep.",
+    label: "KALD PIPELINE",
+    title: "Lead gen uten slit",
+    body: "Lister blir utdaterte. Maler flopper. Reps brenner ut. Nexin kjører finn → berik → nå → book-løkken på autopilot — kalenderen din fylles mens du sover.",
     stat: "<2%",
-    statSuffix: "industry reply rate",
+    statSuffix: "bransjens svarrate",
   },
   {
-    label: "AI WITHOUT CONTEXT",
-    title: "AI that actually sees the work",
-    body: "Generic copilots can't fix what they never see. Nexin gives AI the wiring it needs — your data, your tools, your outcomes — so it ships work, not suggestions.",
+    label: "AI UTEN KONTEKST",
+    title: "AI som faktisk ser arbeidet",
+    body: "Generiske kopilot kan ikke fikse det de aldri ser. Nexin gir AI den koblingen den trenger — dine data, dine verktøy, dine resultater — slik at den leverer arbeid, ikke forslag.",
     stat: "96%",
-    statSuffix: "of AI projects stall",
+    statSuffix: "av AI-prosjekter stopper",
   },
 ];
 
@@ -82,19 +82,19 @@ export function ContextLoss() {
         {/* Header */}
         <div className="mx-auto max-w-4xl text-center">
           <div className="flex justify-center">
-            <SectionLabel>The cost of doing nothing</SectionLabel>
+            <SectionLabel>Kostnaden ved å ikke gjøre noe</SectionLabel>
           </div>
           <h2 className="mt-8 text-balance font-display text-display-sm font-semibold sm:text-display-md md:text-display-lg">
-            <span className="text-blue">60%</span> of revenue
+            <span className="text-blue">60%</span> av inntekter
             <br />
-            is lost in{" "}
-            <span className="font-serif italic text-fg">handoffs</span> —
+            går tapt i{" "}
+            <span className="font-serif italic text-fg">overleveringer</span> —
             <br />
-            and AI can&apos;t fix what it never sees.
+            og AI kan ikke fikse det den aldri ser.
           </h2>
           <p className="mx-auto mt-6 max-w-xl text-pretty text-[18px] leading-[1.55] text-muted-fg">
-            Tool sprawl is killing context. Context decay is killing pipeline.
-            Pipeline decay is killing the quarter. Sound familiar?
+            Verktøykaos dreper kontekst. Konteksttap dreper pipeline.
+            Pipeline-tap dreper kvartalet. Kjent?
           </p>
         </div>
 
@@ -103,7 +103,7 @@ export function ContextLoss() {
           <div className="relative aspect-[1704/624] w-full">
             <Image
               src="/tangled-cable.png"
-              alt="Tangled workflows knotted across your stack"
+              alt="Sammenfiltrede arbeidsflyter knyttet på tvers av stacken din"
               fill
               priority
               sizes="(max-width: 1280px) 100vw, 1200px"
@@ -142,13 +142,13 @@ export function ContextLoss() {
 
             {/* Right knot — thought bubbles */}
             <Bubble className="absolute right-[14%] top-[18%] hidden rotate-[-2deg] sm:block">
-              Where&apos;s that file?
+              Hvor er den filen?
             </Bubble>
             <Bubble className="absolute right-[2%] top-[38%] hidden rotate-[1deg] sm:block">
-              Did anyone follow up?
+              Fulgte noen opp?
             </Bubble>
             <Bubble className="absolute right-[10%] top-[60%] hidden rotate-[-1deg] sm:block">
-              Is this the latest?
+              Er dette den nyeste?
             </Bubble>
           </div>
         </div>

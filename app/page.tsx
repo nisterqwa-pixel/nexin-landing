@@ -4,8 +4,6 @@ import { LogoBar } from "@/components/site/logo-bar";
 import { ContextLoss } from "@/components/site/context-loss";
 import { Comparison } from "@/components/site/comparison";
 import { AutomationModel } from "@/components/site/automation-model";
-import { LeadGen } from "@/components/site/lead-gen";
-import { Services } from "@/components/site/services";
 import { GrowthStory } from "@/components/site/growth-story";
 import { Manifesto } from "@/components/site/manifesto";
 import { Testimonials } from "@/components/site/testimonials";
@@ -23,8 +21,6 @@ export default function Home() {
         <ContextLoss />
         <Comparison />
         <AutomationModel />
-        <LeadGen />
-        <Services />
         <Manifesto />
         <Testimonials />
         <FinalCta />

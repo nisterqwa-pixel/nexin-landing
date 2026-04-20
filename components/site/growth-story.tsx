@@ -54,27 +54,27 @@ const nexinPath = catmull(nexinPoints);
 const steps = [
   {
     at: 0.08,
-    eyebrow: "WEEK 1",
-    title: "Same baseline.",
-    body: "Two B2B teams. Same ICP. Same quota. One ships Nexin on day one. The other keeps running the old playbook.",
+    eyebrow: "UKE 1",
+    title: "Samme startpunkt.",
+    body: "To B2B-team. Samme ICP. Samme kvote. Ett team tar i bruk Nexin på dag én. Det andre fortsetter med den gamle spilleboken.",
   },
   {
     at: 0.28,
-    eyebrow: "WEEK 3",
-    title: "Nexin fires up.",
-    body: "The engine is enriching leads, personalizing outbound, and booking meetings overnight. The other team is still cleaning their CRM.",
+    eyebrow: "UKE 3",
+    title: "Nexin starter.",
+    body: "Motoren beriker leads, personaliserer outbound og booker møter over natten. Det andre teamet renser fortsatt CRM-en sin.",
   },
   {
     at: 0.52,
-    eyebrow: "WEEK 6",
-    title: "The gap compounds.",
-    body: "Every booked meeting feeds the model. Every reply sharpens the copy. Autopilot outpaces manual by 2.5×.",
+    eyebrow: "UKE 6",
+    title: "Gapet øker.",
+    body: "Hvert booket møte mater modellen. Hvert svar skjerper kopien. Autopilot overgår manuelt med 2,5×.",
   },
   {
     at: 0.76,
-    eyebrow: "WEEK 12",
-    title: "Different universe.",
-    body: "288 qualified meetings vs 50. Same headcount. Same spend. One team is hiring closers — the other is still writing email sequences.",
+    eyebrow: "UKE 12",
+    title: "Forskjellig univers.",
+    body: "288 kvalifiserte møter mot 50. Samme antall ansatte. Samme budsjett. Ett team ansetter closers — det andre skriver fortsatt e-postsekvenser.",
   },
 ];
 
@@ -142,7 +142,7 @@ export function GrowthStory() {
         <div className="container relative z-10 pt-10">
           <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-blue">
             <span className="mr-2 inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-blue align-middle" />
-            Scroll · A 12-week story in one chart
+            Rull · En 12-ukers historie i ett diagram
           </p>
         </div>
 
@@ -153,7 +153,7 @@ export function GrowthStory() {
               viewBox={`0 0 ${W} ${H}`}
               className="h-full w-full max-w-[1400px]"
               role="img"
-              aria-label="Pipeline growth over 12 weeks"
+              aria-label="Pipeline-vekst over 12 uker"
               preserveAspectRatio="xMidYMid meet"
             >
               <defs>
@@ -248,7 +248,7 @@ export function GrowthStory() {
                 fontFamily="ui-monospace, monospace"
                 fill="#94A3B8"
               >
-                Without · 50
+                Uten · 50
               </text>
 
               {/* With Nexin — clipped by scroll */}
@@ -440,11 +440,11 @@ function StepNarrator({ stepIndex }: { stepIndex: MotionValue<number> }) {
                   "linear-gradient(to right, #6B8EFF, #1F44FF, #8BA6FF)",
               }}
             />
-            <span className="font-medium text-white">With Nexin</span>
+            <span className="font-medium text-white">Med Nexin</span>
           </div>
           <div className="flex items-center gap-2">
             <span className="h-[2px] w-10 rounded border-t-2 border-dashed border-slate-400" />
-            <span className="text-white/50">Without</span>
+            <span className="text-white/50">Uten</span>
           </div>
         </div>
       </div>

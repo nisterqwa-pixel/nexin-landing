@@ -65,20 +65,20 @@ const annotations = [
   {
     idx: 3,
     at: 0.35,
-    title: "Nexin lives",
-    sub: "First booked meetings",
+    title: "Nexin starter",
+    sub: "Første bookede møter",
   },
   {
     idx: 7,
     at: 0.7,
-    title: "Compounding",
-    sub: "Model sharpens, copy tightens",
+    title: "Forsterker seg",
+    sub: "Modellen skjerpes, kopien strammes",
   },
   {
     idx: 11,
     at: 0.95,
-    title: "292 meetings",
-    sub: "24× vs manual baseline",
+    title: "292 møter",
+    sub: "24× vs manuell baseline",
   },
 ];
 
@@ -148,11 +148,11 @@ export function LiveRevenueCard() {
             <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-400" />
           </span>
           <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-white/60">
-            Live · Pipeline / qualified meetings
+            Live · Pipeline / kvalifiserte møter
           </p>
         </div>
         <span className="rounded-full border border-white/10 bg-white/[0.04] px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.14em] text-white/70">
-          Last 12 mo
+          Siste 12 mnd
         </span>
       </div>
 
@@ -160,7 +160,7 @@ export function LiveRevenueCard() {
       <div className="relative flex items-end justify-between px-6 pt-6">
         <div>
           <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-white/50">
-            Booked this year
+            Booket i år
           </p>
           <div className="mt-2 flex items-baseline gap-3">
             <p className="font-display text-[52px] font-semibold leading-none tracking-[-0.05em] text-white">
@@ -173,7 +173,7 @@ export function LiveRevenueCard() {
         </div>
         <div className="text-right">
           <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-white/50">
-            This month
+            Denne måneden
           </p>
           <p className="mt-2 font-display text-[22px] font-semibold tabular-nums text-blue">
             +{liveVal}
@@ -188,7 +188,7 @@ export function LiveRevenueCard() {
           className="h-[300px] w-full"
           preserveAspectRatio="xMidYMid meet"
           role="img"
-          aria-label="Pipeline growth chart"
+          aria-label="Pipeline-vekstkart"
         >
           <defs>
             <linearGradient id="hrc-area" x1="0" y1="0" x2="0" y2="1">

@@ -3,9 +3,9 @@ import { NavLogo } from "./header-logo";
 import { ArrowUpRight } from "lucide-react";
 
 const links = [
-  { href: "#lead-gen", label: "Lead Gen" },
-  { href: "#services", label: "Services" },
-  { href: "#contact", label: "Contact" },
+  { href: "/lead-gen", label: "Lead Gen" },
+  { href: "/tjenester", label: "Tjenester" },
+  { href: "/kontakt", label: "Kontakt" },
 ];
 
 export function SiteNav() {
@@ -33,13 +33,13 @@ export function SiteNav() {
             href="#contact"
             className="hidden text-[13px] font-medium tracking-tight text-fg/70 transition-colors hover:text-fg sm:inline"
           >
-            Sign in
+            Logg inn
           </Link>
           <Link
-            href="#contact"
+            href="/bestill"
             className="group inline-flex items-center gap-1.5 rounded-full bg-fg px-4 py-2 text-[13px] font-medium tracking-tight text-bg transition-all hover:bg-blue"
           >
-            Book a call
+            Bestill samtale
             <ArrowUpRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
           </Link>
         </div>

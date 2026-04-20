@@ -14,28 +14,28 @@ type Row = {
 
 const rows: Row[] = [
   {
-    label: "Meetings booked / month",
+    label: "Møter booket / måned",
     manualPct: 18,
     manualVal: "6",
     nexinPct: 100,
     nexinVal: "47",
   },
   {
-    label: "Hours spent on ops / week",
+    label: "Timer brukt på ops / uke",
     manualPct: 92,
-    manualVal: "31h",
+    manualVal: "31t",
     nexinPct: 14,
-    nexinVal: "4h",
+    nexinVal: "4t",
   },
   {
-    label: "Time to first qualified lead",
+    label: "Tid til første kvalifiserte lead",
     manualPct: 88,
-    manualVal: "11 days",
+    manualVal: "11 dager",
     nexinPct: 9,
-    nexinVal: "< 24h",
+    nexinVal: "< 24t",
   },
   {
-    label: "Cost per booked meeting",
+    label: "Kostnad per booket møte",
     manualPct: 95,
     manualVal: "$420",
     nexinPct: 22,
@@ -76,7 +76,7 @@ function Bar({ row, play }: { row: Row; play: boolean }) {
 
       {/* Without Nexin */}
       <div className="mb-3 grid grid-cols-[100px_1fr_70px] items-center gap-4 sm:grid-cols-[140px_1fr_90px]">
-        <span className="text-[12px] font-medium text-muted-fg">Without</span>
+        <span className="text-[12px] font-medium text-muted-fg">Uten</span>
         <div className="relative h-6 overflow-hidden rounded-full bg-cream">
           <div
             className="absolute inset-y-0 left-0 rounded-full bg-fg/80"
@@ -90,7 +90,7 @@ function Bar({ row, play }: { row: Row; play: boolean }) {
 
       {/* With Nexin */}
       <div className="grid grid-cols-[100px_1fr_70px] items-center gap-4 sm:grid-cols-[140px_1fr_90px]">
-        <span className="text-[12px] font-semibold text-blue">With Nexin</span>
+        <span className="text-[12px] font-semibold text-blue">Med Nexin</span>
         <div className="relative h-6 overflow-hidden rounded-full bg-cream">
           <div
             className="absolute inset-y-0 left-0 rounded-full bg-blue shadow-[0_0_24px_rgba(31,68,255,0.45)]"
@@ -114,16 +114,16 @@ export function Comparison() {
       <div className="container">
         <div className="mx-auto max-w-3xl text-center">
           <div className="flex justify-center">
-            <SectionLabel>Side by side</SectionLabel>
+            <SectionLabel>Side ved side</SectionLabel>
           </div>
           <h2 className="mt-6 text-balance font-display text-display-xs font-semibold sm:text-display-sm md:text-display-md">
-            Manual ops crawl.
+            Manuell ops kravler.
             <br />
-            <span className="font-serif italic text-blue">Nexin ships.</span>
+            <span className="font-serif italic text-blue">Nexin leverer.</span>
           </h2>
           <p className="mx-auto mt-6 max-w-xl text-pretty text-[17px] leading-[1.55] text-muted-fg">
-            Watch the difference in real time. Same goal, same week — one team
-            on autopilot, the other still copy-pasting.
+            Se forskjellen i sanntid. Samme mål, samme uke — ett team på autopilot,
+            det andre kopierer fortsatt.
           </p>
         </div>
 
@@ -140,8 +140,8 @@ export function Comparison() {
           transition={{ delay: 0.6, duration: 0.6 }}
           className="mx-auto mt-14 max-w-xl text-center text-[13px] text-muted-fg"
         >
-          Median client outcomes after 60 days. We don&apos;t cherry-pick — and
-          we publish the methodology.
+          Median klientresultater etter 60 dager. Vi velger ikke ut — og
+          vi publiserer metodikken.
         </motion.p>
       </div>
     </section>

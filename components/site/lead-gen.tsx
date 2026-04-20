@@ -13,30 +13,30 @@ const pipeline = [
   {
     n: "01",
     icon: Search,
-    label: "FIND",
-    title: "Pinpoint your buyers",
-    body: "We profile your ICP and pull from 200M+ verified contacts. No spray, no scraping junk — surgical lists only.",
+    label: "FINN",
+    title: "Identifiser kjøperne dine",
+    body: "Vi profilerer din ICP og henter fra 200M+ verifiserte kontakter. Ingen spray, ingen søppelskraping — kirurgiske lister kun.",
   },
   {
     n: "02",
     icon: Sparkles,
-    label: "ENRICH",
-    title: "Add the signal",
-    body: "Intent, hiring, tech stack, funding events. Every lead arrives with a reason to reach out today.",
+    label: "BERIK",
+    title: "Legg til signalet",
+    body: "Intensjon, ansettelser, teknologistakk, finansieringshendelser. Hvert lead ankommer med en grunn til å nå ut i dag.",
   },
   {
     n: "03",
     icon: Send,
-    label: "REACH",
-    title: "Personalized at scale",
-    body: "Multi-channel sequences, AI-written, human-reviewed. On-brand. Never templated. Never robotic.",
+    label: "NÅ",
+    title: "Personalisert i stor skala",
+    body: "Flerkanalssekvenser, AI-skrevet, menneskegodkjent. On-brand. Aldri maler. Aldri robotaktig.",
   },
   {
     n: "04",
     icon: CalendarCheck,
     label: "BOOK",
-    title: "Meetings on autopilot",
-    body: "An AI SDR handles replies and books straight to your calendar. You show up to qualified calls.",
+    title: "Møter på autopilot",
+    body: "En AI SDR håndterer svar og booker direkte i kalenderen din. Du dukker opp til kvalifiserte samtaler.",
   },
 ];
 
@@ -46,22 +46,22 @@ export function LeadGen() {
       <div className="container">
         <div className="grid gap-16 lg:grid-cols-[1fr_1.4fr] lg:gap-24">
           <div className="lg:sticky lg:top-32 lg:self-start">
-            <SectionLabel number="01">Flagship product</SectionLabel>
+            <SectionLabel number="01">Flaggskipprodukt</SectionLabel>
             <h2 className="mt-6 text-balance font-display text-display-xs font-semibold sm:text-display-sm md:text-display-md">
               Lead Gen,
               <br />
-              <span className="font-serif italic text-blue">on autopilot.</span>
+              <span className="font-serif italic text-blue">på autopilot.</span>
             </h2>
             <p className="mt-8 max-w-md text-pretty text-[17px] leading-[1.6] text-muted-fg">
-              We find them. We enrich them. We reach them. We book them. You
-              show up to the meeting. Our proven engine has put 1,800+ qualified
-              meetings on client calendars in the last year alone.
+              Vi finner dem. Vi beriker dem. Vi når dem. Vi booker dem. Du
+              dukker opp til møtet. Vår dokumenterte motor har satt 1 800+ kvalifiserte
+              møter i klienters kalendere det siste året alene.
             </p>
             <Link
-              href="#contact"
+              href="/bestill"
               className="group mt-10 inline-flex items-center gap-2 text-[14px] font-medium tracking-tight text-fg"
             >
-              <span className="link-underline">See a live demo</span>
+              <span className="link-underline">Se en live demo</span>
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
             </Link>
 
@@ -71,9 +71,9 @@ export function LeadGen() {
                 47
               </span>
               <span className="text-sm text-muted-fg">
-                meetings booked
+                møter booket
                 <br />
-                last 30 days
+                siste 30 dager
               </span>
             </div>
           </div>

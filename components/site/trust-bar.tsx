@@ -14,7 +14,7 @@ export function TrustBar() {
     <section className="border-y border-border/60 bg-muted/20 py-10">
       <div className="container">
         <p className="mb-6 text-center font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground/70">
-          Trusted by operators shipping real revenue
+          Betrodd av operatører som leverer ekte inntekter
         </p>
         <div className="flex flex-wrap items-center justify-center gap-x-12 gap-y-6 opacity-70">
           {logos.map((name) => (

@@ -12,26 +12,26 @@ export function Manifesto() {
       <div className="container relative">
         <div className="mx-auto max-w-5xl">
           <p className="mb-10 text-center font-mono text-[11px] uppercase tracking-[0.18em] text-muted-fg">
-            — The Nexin operating principle
+            — Nexins driftsprinsipp
           </p>
           <p className="text-balance text-center font-display text-[44px] font-semibold leading-[0.98] tracking-[-0.05em] text-fg sm:text-[68px] md:text-[88px] lg:text-[104px]">
-            We don&apos;t sell{" "}
-            <span className="font-serif italic text-blue">software.</span>
+            Vi selger ikke{" "}
+            <span className="font-serif italic text-blue">programvare.</span>
             <br />
-            We sell{" "}
+            Vi selger{" "}
             <span className="relative inline-block">
               <span className="relative z-10 font-serif italic text-blue">
-                hours back
+                timer tilbake
               </span>
               <span className="absolute -bottom-1 left-0 right-0 h-3 bg-blue/15" />
             </span>{" "}
-            to your team.
+            til teamet ditt.
           </p>
 
           <div className="mt-16 flex items-center justify-center gap-4">
             <div className="h-px w-12 bg-line-strong" />
             <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-muted-fg">
-              Founder &amp; team — Nexin Labs
+              Grunnlegger &amp; team — Nexin Labs
             </span>
             <div className="h-px w-12 bg-line-strong" />
           </div>

@@ -45,8 +45,8 @@ const events: TraceEvent[] = [
     t: "00.0s",
     brand: { Icon: FaLinkedin, name: "LinkedIn", color: "#0A66C2" },
     slug: "signal · pricing_page_view",
-    title: "Alex lands on /pricing.",
-    body: "Third-party pixel fires a signal. No rep is watching. Nexin already is.",
+    title: "Alex besøker /pricing.",
+    body: "Tredjeparts-piksel avfyrer et signal. Ingen rep ser på. Nexin gjør det allerede.",
     fills: ["name", "role", "company", "location"],
   },
   {
@@ -54,8 +54,8 @@ const events: TraceEvent[] = [
     t: "00.4s",
     brand: { Icon: SiHubspot, name: "HubSpot", color: "#FF7A59" },
     slug: "enrich · dossier_built",
-    title: "The dossier gets built.",
-    body: "CRM history, firmographics, tech stack, intent, funding — pulled in a single round trip.",
+    title: "Dossieret bygges.",
+    body: "CRM-historikk, firmografier, teknologistakk, intensjon, finansiering — hentet i én tur.",
     fills: ["headcount", "stage", "stack", "intent"],
   },
   {
@@ -63,8 +63,8 @@ const events: TraceEvent[] = [
     t: "00.9s",
     brand: { Icon: SiOpenai, name: "OpenAI", color: "#10A37F" },
     slug: "decide · draft_generated",
-    title: "The AI writes the play.",
-    body: "A 74-word email in your voice, referencing the Series B round Acme announced yesterday.",
+    title: "AI skriver utkastet.",
+    body: "En 74-ords e-post i din stemme, med referanse til Serie B-runden Acme annonserte i går.",
     fills: ["draft"],
   },
   {
@@ -72,24 +72,24 @@ const events: TraceEvent[] = [
     t: "01.3s",
     brand: { Icon: SiGmail, name: "Gmail", color: "#EA4335" },
     slug: "act · email_sent",
-    title: "Email lands in the inbox.",
-    body: "Sent from your rep's real address, threaded under the pricing visit, tracked for replies.",
+    title: "E-post lander i innboksen.",
+    body: "Sendt fra repens ekte adresse, trådet under prisbesøket, sporet for svar.",
   },
   {
     revealAt: 3500,
     t: "01.5s",
     brand: { Icon: SiSlack, name: "Slack", color: "#E01E5A" },
     slug: "notify · sales_pinged",
-    title: "Your team gets the heads-up.",
-    body: "A card drops into #sales with the dossier, the draft, and a \u201ctake over\u201d button.",
+    title: "Teamet ditt får beskjed.",
+    body: "Et kort dukker opp i #salg med dossieret, utkastet og en «ta over»-knapp.",
   },
   {
     revealAt: 5200,
     t: "05.8s",
     brand: { Icon: SiGooglecalendar, name: "Google Calendar", color: "#4285F4" },
     slug: "outcome · meeting_booked",
-    title: "Alex replies. Meeting lands.",
-    body: "The AI SDR confirms a time, drops the invite, updates HubSpot. You show up prepped.",
+    title: "Alex svarer. Møtet er booket.",
+    body: "AI SDR bekrefter et tidspunkt, sender invitasjonen, oppdaterer HubSpot. Du møter opp forberedt.",
     fills: ["meeting", "status"],
   },
 ];
@@ -100,16 +100,16 @@ const LOOP_HOLD_MS = 1800;
 type DossierField = { key: string; label: string; value: string };
 
 const dossierFields: DossierField[] = [
-  { key: "name", label: "Name", value: "Alex Rivera" },
-  { key: "role", label: "Role", value: "Head of Operations" },
-  { key: "company", label: "Company", value: "Acme Robotics" },
-  { key: "location", label: "HQ", value: "Brooklyn, NY" },
-  { key: "headcount", label: "Headcount", value: "84" },
-  { key: "stage", label: "Stage", value: "Series B · 2026" },
+  { key: "name", label: "Navn", value: "Alex Rivera" },
+  { key: "role", label: "Rolle", value: "Driftssjef" },
+  { key: "company", label: "Selskap", value: "Acme Robotics" },
+  { key: "location", label: "HK", value: "Brooklyn, NY" },
+  { key: "headcount", label: "Antall ansatte", value: "84" },
+  { key: "stage", label: "Fase", value: "Serie B · 2026" },
   { key: "stack", label: "Stack", value: "HubSpot, Linear, Slack" },
-  { key: "intent", label: "Intent score", value: "94 / 100" },
-  { key: "meeting", label: "Meeting", value: "Tue 2:00pm EST" },
-  { key: "status", label: "Status", value: "CONVERTED" },
+  { key: "intent", label: "Intensjonsscore", value: "94 / 100" },
+  { key: "meeting", label: "Møte", value: "Tir 14:00 CET" },
+  { key: "status", label: "Status", value: "KONVERTERT" },
 ];
 
 function formatTime(ms: number) {
@@ -248,8 +248,8 @@ export function AutomationModel() {
   const statusText = !playRequested
     ? "paused"
     : playbackComplete
-      ? "complete · looping"
-      : "playing now";
+      ? "ferdig · looper"
+      : "spiller nå";
 
   return (
     <section
@@ -348,14 +348,14 @@ function SectionHeader() {
   return (
     <div className="mx-auto max-w-3xl text-center">
       <h2 className="text-balance font-display text-display-xs font-semibold leading-[0.95] sm:text-display-sm md:text-display-md">
-        One lead.
+        Én lead.
         <br />
-        <span className="font-serif italic text-blue">Six seconds.</span>
+        <span className="font-serif italic text-blue">Seks sekunder.</span>
       </h2>
       <p className="mx-auto mt-6 max-w-xl text-pretty text-[17px] leading-[1.55] text-white/55">
-        Watch a real lead move through the stack — from pricing-page hit to
-        meeting on the calendar. Same tools you already use. None of the
-        copy-paste.
+        Se en ekte lead bevege seg gjennom stacken — fra prisside-besøk til
+        møte i kalenderen. Samme verktøy du allerede bruker. Ingen
+        kopiering og liming.
       </p>
     </div>
   );
@@ -422,7 +422,7 @@ function LeadDossier({
         <div className="flex items-center justify-between border-b border-black/10 px-6 pb-3 pt-5">
           <div className="flex items-center gap-2 font-mono text-[9px] uppercase tracking-[0.18em] text-black/50">
             <span className="h-1.5 w-1.5 rounded-full bg-[#E11D48]" />
-            Confidential · lead file
+            Konfidensielt · lead-fil
           </div>
           <div className="font-mono text-[9px] uppercase tracking-[0.18em] text-black/50">
             RUN · 2874
@@ -438,13 +438,13 @@ function LeadDossier({
             </div>
             <div className="min-w-0 flex-1">
               <p className="font-mono text-[9px] uppercase tracking-[0.2em] text-black/45">
-                Subject
+                Subjekt
               </p>
               <h3 className="mt-1 font-display text-[28px] font-semibold leading-[1] tracking-[-0.035em] text-black">
                 Alex Rivera
               </h3>
               <p className="mt-1 text-[13px] leading-[1.4] text-black/60">
-                Head of Operations · Acme Robotics
+                Driftssjef · Acme Robotics
               </p>
             </div>
           </div>
@@ -477,13 +477,13 @@ function LeadDossier({
                 >
                   <div className="rounded-xl border border-black/10 bg-white/60 p-4">
                     <p className="font-mono text-[9px] uppercase tracking-[0.18em] text-black/45">
-                      Draft · 74 words · confidence 94%
+                      Utkast · 74 ord · sikkerhet 94%
                     </p>
                     <p className="mt-2 font-serif text-[14px] italic leading-[1.5] text-black/80">
-                      &ldquo;Hey Alex — saw you&apos;re scaling ops at Acme
-                      right after the Series B. We just helped Helix book 47
-                      meetings in their first month on autopilot. Worth a
-                      15-minute look?&rdquo;
+                      &ldquo;Hei Alex — så at du skalerer ops hos Acme
+                      rett etter Serie B. Vi hjalp nettopp Helix med å booke 47
+                      møter i sin første måned på autopilot. Verdt en
+                      15-minutters prat?&rdquo;
                     </p>
                   </div>
                 </motion.div>
@@ -510,7 +510,7 @@ function LeadDossier({
               <div className="relative">
                 <div className="rounded-md border-[3px] border-[#D1342F] px-4 py-2 text-[#D1342F] shadow-[0_0_0_2px_#F6F1E7_inset] mix-blend-multiply">
                   <p className="font-display text-[22px] font-semibold uppercase leading-none tracking-[0.18em]">
-                    Converted
+                    Konvertert
                   </p>
                   <p className="mt-1 text-center font-mono text-[9px] uppercase tracking-[0.18em]">
                     5.8s · $24k pipeline
@@ -625,7 +625,7 @@ function EventStream({
           {visible.length < totalCount && (
             <li className="flex items-center gap-4 py-3 pl-[52px] font-mono text-[11px] uppercase tracking-[0.18em] text-white/40 sm:pl-[60px]">
               <span className="inline-block h-3 w-[2px] animate-pulse bg-blue" />
-              awaiting next event…
+              venter på neste hendelse…
             </li>
           )}
         </ol>
@@ -641,9 +641,9 @@ function EventStream({
               className="mt-4 border-t border-white/10 pt-4"
             >
               <div className="grid grid-cols-3 gap-4">
-                <Metric label="Latency" value="5.8s" />
-                <Metric label="Tools touched" value="6" />
-                <Metric label="Human keystrokes" value="0" />
+                <Metric label="Forsinkelse" value="5.8s" />
+                <Metric label="Verktøy brukt" value="6" />
+                <Metric label="Menneskelige tastetrykk" value="0" />
               </div>
             </motion.div>
           )}
@@ -749,7 +749,7 @@ function PlayerChrome({
         <button
           type="button"
           onClick={onPlayPause}
-          aria-label={playing ? "Pause trace" : "Play trace"}
+          aria-label={playing ? "Sett på pause" : "Spill av"}
           className="group flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-white text-[#0A0C12] transition-all hover:scale-[1.06] hover:bg-blue hover:text-white"
         >
           {playing ? (
@@ -778,7 +778,7 @@ function PlayerChrome({
         <button
           type="button"
           onClick={onReplay}
-          aria-label="Replay from start"
+          aria-label="Spill av fra start"
           className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full border border-white/15 text-white/60 transition-all hover:border-white/40 hover:text-white"
         >
           <RotateCcw className="h-3.5 w-3.5" />
@@ -837,16 +837,16 @@ function Outro() {
         <div className="grid gap-8 lg:grid-cols-[1.3fr_1fr] lg:items-center lg:gap-10">
           <div>
             <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-blue">
-              The receipt
+              Kvitteringen
             </p>
             <p className="mt-4 font-display text-[30px] font-semibold leading-[1.05] tracking-[-0.03em] text-white sm:text-[42px] md:text-[52px]">
-              Nexin shipped this in{" "}
-              <span className="font-serif italic text-blue">5.8 seconds.</span>
+              Nexin leverte dette på{" "}
+              <span className="font-serif italic text-blue">5,8 sekunder.</span>
               <br />
               <span className="text-white/35">
-                Your team takes{" "}
+                Teamet ditt bruker{" "}
                 <span className="relative inline-block">
-                  <span className="font-serif italic">eleven days</span>
+                  <span className="font-serif italic">elleve dager</span>
                   <span
                     aria-hidden
                     className="pointer-events-none absolute left-0 right-0 top-[58%] h-[2px] -rotate-[2deg] bg-white/40"
@@ -859,24 +859,24 @@ function Outro() {
 
           <div className="flex flex-col items-start gap-4 lg:items-end">
             <Link
-              href="#contact"
+              href="/bestill"
               className="group inline-flex h-14 items-center gap-2.5 rounded-full bg-white px-7 text-[14px] font-medium tracking-tight text-[#0A0C12] transition-all hover:bg-blue hover:text-white"
             >
-              Book a strategy call
+              Bestill strategisamtale
               <ArrowUpRight className="h-4 w-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
             </Link>
             <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-white/40">
-              No deck. No discovery maze. Just the run.
+              Ingen presentasjon. Ingen labyrint. Bare kjøringen.
             </p>
           </div>
         </div>
 
         <div className="mt-8 flex flex-wrap items-center gap-2 border-t border-white/10 pt-5">
-          <OutcomeChip label="Meeting booked" />
-          <OutcomeChip label="$24k pipeline added" />
-          <OutcomeChip label="0 rep-hours" />
-          <OutcomeChip label="6 tools orchestrated" />
-          <OutcomeChip label="1 happy closer" check />
+          <OutcomeChip label="Møte booket" />
+          <OutcomeChip label="$24k pipeline lagt til" />
+          <OutcomeChip label="0 rep-timer" />
+          <OutcomeChip label="6 verktøy orkestrert" />
+          <OutcomeChip label="1 fornøyd closer" check />
         </div>
       </div>
     </div>

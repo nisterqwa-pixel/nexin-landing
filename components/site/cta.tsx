@@ -23,10 +23,10 @@ export function FinalCta() {
       <div className="container relative py-32 sm:py-40">
         <div className="mx-auto max-w-5xl text-center">
           <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-muted-fg">
-            Ready when you are
+            Klar når du er det
           </p>
           <h2 className="mt-8 text-balance font-display text-display-sm font-semibold sm:text-display-md md:text-display-lg lg:text-display-xl">
-            Stop doing what
+            Slutt å gjøre det
             <br />
             <span className="font-serif italic text-blue">
               <TextScramble
@@ -35,14 +35,14 @@ export function FinalCta() {
                 duration={1.2}
                 speed={0.04}
               >
-                a machine could do.
+                en maskin kan gjøre.
               </TextScramble>
             </span>
           </h2>
           <p className="mx-auto mt-10 max-w-xl text-pretty text-[18px] leading-[1.55] text-muted-fg">
-            Thirty-minute strategy call. We&apos;ll map your biggest bottleneck
-            and tell you whether automation is the right fix — even if the
-            answer is no.
+            Tretti minutters strategisamtale. Vi kartlegger din største
+            flaskehals og forteller deg om automatisering er riktig løsning —
+            selv om svaret er nei.
           </p>
 
           <div className="mt-12 flex flex-col items-center justify-center gap-4 sm:flex-row sm:gap-5">
@@ -51,7 +51,7 @@ export function FinalCta() {
               className="group inline-flex h-14 items-center gap-2.5 rounded-full bg-fg px-8 text-[15px] font-medium tracking-tight text-bg transition-all hover:bg-blue"
             >
               <Calendar className="h-4 w-4" />
-              Book your strategy call
+              Bestill din strategisamtale
               <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
             </Link>
             <Link
@@ -63,7 +63,7 @@ export function FinalCta() {
           </div>
 
           <p className="mt-12 font-mono text-[10px] uppercase tracking-[0.18em] text-muted-fg/70">
-            No decks. No spam. No follow-up unless you ask.
+            Ingen presentasjoner. Ingen spam. Ingen oppfølging uten at du ber om det.
           </p>
         </div>
       </div>

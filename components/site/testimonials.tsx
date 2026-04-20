@@ -7,23 +7,23 @@ import { SectionLabel } from "./section-label";
 const quotes = [
   {
     quote:
-      "Nexin replaced two SDRs and a part-time ops contractor in our first month. The lead-gen engine has put 47 qualified meetings on our calendar in the last 30 days alone.",
+      "Nexin erstattet to SDR-er og en deltids ops-konsulent i vår første måned. Lead-gen-motoren har satt 47 kvalifiserte møter i kalenderen vår de siste 30 dagene alene.",
     name: "Maya Chen",
-    role: "Head of Growth",
+    role: "Vekstsjef",
     company: "Northwind Labs",
   },
   {
     quote:
-      "We tried three other AI agencies before Nexin. They sold decks. Nexin shipped a working system in three weeks. It is not even close.",
+      "Vi prøvde tre andre AI-byråer før Nexin. De solgte presentasjoner. Nexin leverte et fungerende system på tre uker. Det er ikke engang i nærheten.",
     name: "David Okafor",
-    role: "Founder & CEO",
+    role: "Grunnlegger & CEO",
     company: "Helix Robotics",
   },
   {
     quote:
-      "ROI was clear by week six. By month three we had hired two reps just to handle the inbound the system was generating.",
+      "ROI var tydelig innen uke seks. I løpet av måned tre hadde vi ansatt to reps bare for å håndtere inboundsene systemet genererte.",
     name: "Sara Linde",
-    role: "VP Sales",
+    role: "Salgssjef",
     company: "Forge & Co.",
   },
 ];
@@ -74,12 +74,12 @@ export function Testimonials() {
       <div className="container">
         <div className="grid items-end gap-10 lg:grid-cols-[1fr_auto] lg:gap-16">
           <div className="max-w-3xl">
-            <SectionLabel number="05">What clients say</SectionLabel>
+            <SectionLabel number="05">Hva kunder sier</SectionLabel>
             <h2 className="mt-6 text-balance font-display text-display-xs font-semibold sm:text-display-sm md:text-display-md">
-              Operators don&apos;t recommend
+              Operatører anbefaler ikke
               <br />
-              hype. They recommend{" "}
-              <span className="font-serif italic text-blue">results.</span>
+              hype. De anbefaler{" "}
+              <span className="font-serif italic text-blue">resultater.</span>
             </h2>
           </div>
         </div>

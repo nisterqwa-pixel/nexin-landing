@@ -17,17 +17,17 @@ const services = [
   {
     icon: Target,
     name: "Lead Gen",
-    desc: "Find, enrich, reach, book — done.",
+    desc: "Finn, berik, nå, book — ferdig.",
     flagship: true,
     span: "lg:col-span-2 lg:row-span-2",
   },
-  { icon: MessageSquare, name: "AI Outreach", desc: "Personalized at scale." },
-  { icon: Workflow, name: "Workflow Automation", desc: "Stitch your stack." },
-  { icon: Phone, name: "Voice Agents", desc: "Inbound + outbound, 24/7." },
-  { icon: Database, name: "CRM Automation", desc: "Hygiene, sync, enrich." },
-  { icon: BrainCircuit, name: "Custom GPTs", desc: "Internal copilots that ship." },
-  { icon: BarChart3, name: "Reporting & RevOps", desc: "One source of truth." },
-  { icon: Sparkles, name: "AI Strategy", desc: "Audit, roadmap, ROI model." },
+  { icon: MessageSquare, name: "AI-oppsøking", desc: "Personalisert i stor skala." },
+  { icon: Workflow, name: "Arbeidsflytautomasjon", desc: "Sy sammen stacken din." },
+  { icon: Phone, name: "Stemmeagenter", desc: "Innkommende + utgående, 24/7." },
+  { icon: Database, name: "CRM-automasjon", desc: "Hygiene, synk, berik." },
+  { icon: BrainCircuit, name: "Tilpassede GPT-er", desc: "Interne kopilot som leverer." },
+  { icon: BarChart3, name: "Rapportering & RevOps", desc: "Én kilde til sannhet." },
+  { icon: Sparkles, name: "AI-strategi", desc: "Revisjon, veikart, ROI-modell." },
 ];
 
 export function Services() {
@@ -36,17 +36,16 @@ export function Services() {
       <div className="container">
         <div className="grid items-end gap-10 lg:grid-cols-[1fr_auto] lg:gap-16">
           <div className="max-w-3xl">
-            <SectionLabel number="02">What we ship</SectionLabel>
+            <SectionLabel number="02">Hva vi leverer</SectionLabel>
             <h2 className="mt-6 text-balance font-display text-display-xs font-semibold sm:text-display-sm md:text-display-md">
-              One studio.
+              Ett studio.
               <br />
-              <span className="font-serif italic text-blue">Every</span> automation
-              surface.
+              <span className="font-serif italic text-blue">Alle</span> automatiseringsflater.
             </h2>
           </div>
           <p className="max-w-sm text-pretty text-[16px] leading-[1.55] text-muted-fg">
-            Lead Gen is our flagship. The rest is the toolkit we use to keep
-            clients winning long after the first deployment goes live.
+            Lead Gen er flaggskipet vårt. Resten er verktøykassen vi bruker for å holde
+            klientene vinnende lenge etter at den første utrullingen er live.
           </p>
         </div>
 
@@ -97,7 +96,7 @@ export function Services() {
                 </div>
                 {flagship && (
                   <span className="rounded-full bg-blue/10 px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.14em] text-blue">
-                    Flagship
+                    Flaggskip
                   </span>
                 )}
               </div>
